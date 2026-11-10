@@ -1,5 +1,13 @@
 # Mini DBMS
 
+## Estructura de Carpetas
+- `com.minidbms`:
+  - Contiene únicamente la clase principal para el arranque de la aplicación.
+- `com.minidbms.gui`:
+  - Agrupa las vistas y componentes de la interfaz gráfica de usuario (pantallas y menús).
+- `com.minidbms.model`:
+  - Define las estructuras de datos, clases de metadatos y la representación lógicade los registros.
+
 ## Instalación
 Guía de instalación y ejecución del proyecto
 
