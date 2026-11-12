@@ -1,5 +1,7 @@
 package com.minidbms.modelo;
 
+import java.time.LocalDate;
+
 public class Campo {
 
     private final int id;
@@ -50,5 +52,48 @@ public class Campo {
 
     public void renombrar(String nuevoNombre) {
         this.nombre = nuevoNombre;
+    }
+
+    public void cambiarTipo(TipoCampo nuevoTipo) throws IllegalStateException {
+        if (!esValorCompatible(valorPredeterminado, nuevoTipo)) {
+            throw new IllegalStateException(
+                    "El valor predeterminado no es compatible con el tipo " + nuevoTipo + ".");
+        }
+        this.tipo = nuevoTipo;
+    }
+
+    public void reducirLongitudMaxima(int nuevaLongitudMaxima) throws IllegalArgumentException {
+        if (nuevaLongitudMaxima <= 0) {
+            throw new IllegalArgumentException("La longitud que ingresó es menor o igual a 0.");
+        } else if (nuevaLongitudMaxima > longitudMaxima) {
+            throw new IllegalArgumentException(
+                    "La longitud que ingresó es mayor que la anterior. ¡No se puede reducir!");
+        }
+        this.longitudMaxima = nuevaLongitudMaxima;
+    }
+
+    private boolean esValorCompatible(String valor, TipoCampo tipo) {
+        if (valor == null) {
+            return true;
+        }
+
+        try {
+            switch (tipo) {
+                case ENTERO -> Integer.parseInt(valor);
+                case DECIMAL -> Double.parseDouble(valor);
+                case FECHA -> LocalDate.parse(valor);
+                case BOOLEANO -> {
+                    if (!valor.equalsIgnoreCase("true") && !valor.equalsIgnoreCase("false")) {
+                        return false;
+                    }
+                }
+                case TEXTO -> {
+                    return valor.length() <= longitudMaxima;
+                }
+            }
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }
