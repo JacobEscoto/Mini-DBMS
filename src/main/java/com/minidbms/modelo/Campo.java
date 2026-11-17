@@ -18,9 +18,25 @@ public class Campo {
             int longitudMaxima,
             boolean obligatorio,
             String valorPredeterminado) {
+
+        if (id <= 0) {
+            throw new IllegalArgumentException("El ID debe ser mayor que cero");
+        }
+        if (tipo == null) {
+            throw new IllegalArgumentException("El tipo de campo no debe ser nulo");
+        }
+
+        validarNombre(nombre);
+        validarLongitud(longitudMaxima);
+
+        if (!esValorCompatible(valorPredeterminado, tipo)) {
+            throw new IllegalStateException(
+                    "El valor predeterminado no es compatible con el tipo " + tipo);
+        }
+
         this.id = id;
         this.tipo = tipo;
-        this.nombre = nombre;
+        this.nombre = nombre.trim();
         this.longitudMaxima = longitudMaxima;
         this.obligatorio = obligatorio;
         this.valorPredeterminado = valorPredeterminado;
@@ -51,23 +67,32 @@ public class Campo {
     }
 
     public void renombrar(String nuevoNombre) {
-        this.nombre = nuevoNombre;
+        validarNombre(nuevoNombre);
+        this.nombre = nuevoNombre.trim();
     }
 
-    public void cambiarTipo(TipoCampo nuevoTipo) throws IllegalStateException {
+    public void cambiarTipo(TipoCampo nuevoTipo) {
+        if (nuevoTipo == null) {
+            throw new IllegalArgumentException("El tipo de campo no debe ser nulo");
+        }
         if (!esValorCompatible(valorPredeterminado, nuevoTipo)) {
             throw new IllegalStateException(
-                    "El valor predeterminado no es compatible con el tipo " + nuevoTipo + ".");
+                    "El valor predeterminado no es compatible con el tipo " + nuevoTipo);
         }
         this.tipo = nuevoTipo;
     }
 
-    public void reducirLongitudMaxima(int nuevaLongitudMaxima) throws IllegalArgumentException {
+    public void reducirLongitudMaxima(int nuevaLongitudMaxima) {
         if (nuevaLongitudMaxima <= 0) {
             throw new IllegalArgumentException("La longitud que ingresó es menor o igual a 0.");
         } else if (nuevaLongitudMaxima > longitudMaxima) {
             throw new IllegalArgumentException(
                     "La longitud que ingresó es mayor que la anterior. ¡No se puede reducir!");
+        }
+
+        if (!esValorCompatible(valorPredeterminado, tipo)) {
+            throw new IllegalStateException(
+                    "El valor predeterminado no es compatible con la nueva longitud");
         }
         this.longitudMaxima = nuevaLongitudMaxima;
     }
@@ -75,6 +100,9 @@ public class Campo {
     private boolean esValorCompatible(String valor, TipoCampo tipo) {
         if (valor == null) {
             return true;
+        }
+        if (tipo == null) {
+            return false;
         }
 
         try {
@@ -94,6 +122,18 @@ public class Campo {
             return true;
         } catch (IllegalArgumentException e) {
             return false;
+        }
+    }
+
+    private void validarNombre(String nombre) {
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("El nombre del campo no debe estar vacío");
+        }
+    }
+
+    private void validarLongitud(int longitud) {
+        if (longitud <= 0) {
+            throw new IllegalArgumentException("La longitud debe ser mayor que cero");
         }
     }
 }
