@@ -15,6 +15,9 @@ public class VentanaPrincipal extends JFrame {
 
         // acciones de la aplicación
         salirMItem.addActionListener(e -> acciones.salir());
+
+        DBMS.setVisible(false);
+        Portada.setVisible(true);
     }
 
     /**
@@ -26,7 +29,13 @@ public class VentanaPrincipal extends JFrame {
     private void initComponents() {
 
         panelPadre = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        Portada = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        tituloLabel = new javax.swing.JLabel();
+        jButton6 = new javax.swing.JButton();
+        tituloLabel1 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        DBMS = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         Campos = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -38,11 +47,6 @@ public class VentanaPrincipal extends JFrame {
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         Registros = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        tituloLabel = new javax.swing.JLabel();
-        jButton6 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
         menubarPrincipal = new javax.swing.JMenuBar();
         menuArchivo = new javax.swing.JMenu();
         nuevoArchivoMItem = new javax.swing.JMenuItem();
@@ -55,8 +59,65 @@ public class VentanaPrincipal extends JFrame {
 
         panelPadre.setLayout(new java.awt.CardLayout());
 
-        jPanel2.setBackground(new java.awt.Color(51, 255, 204));
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        Portada.setBackground(new java.awt.Color(0, 153, 153));
+        Portada.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel3.setBackground(new java.awt.Color(0, 51, 51));
+
+        tituloLabel.setFont(new java.awt.Font("SansSerif", 1, 55)); // NOI18N
+        tituloLabel.setForeground(new java.awt.Color(255, 255, 255));
+        tituloLabel.setText("¡Bienvenido");
+
+        jButton6.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        jButton6.setText("Comenzar");
+        jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton6MouseClicked(evt);
+            }
+        });
+
+        tituloLabel1.setFont(new java.awt.Font("SansSerif", 1, 55)); // NOI18N
+        tituloLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        tituloLabel1.setText("a Mini DBMS!");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap(100, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(tituloLabel1)
+                        .addGap(80, 80, 80))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(tituloLabel)
+                        .addGap(100, 100, 100))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(174, 174, 174))))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(115, Short.MAX_VALUE)
+                .addComponent(tituloLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tituloLabel1)
+                .addGap(116, 116, 116)
+                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(212, 212, 212))
+        );
+
+        Portada.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 0, 530, 640));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/minidbms/gui/DBMS.png"))); // NOI18N
+        Portada.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 180, -1, -1));
+
+        panelPadre.add(Portada, "card3");
+
+        DBMS.setBackground(new java.awt.Color(51, 255, 204));
+        DBMS.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         Campos.setBackground(new java.awt.Color(0, 102, 102));
         Campos.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -74,7 +135,7 @@ public class VentanaPrincipal extends JFrame {
         ));
         jScrollPane1.setViewportView(jTable1);
 
-        Campos.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 70, -1, -1));
+        Campos.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 90, -1, -1));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
@@ -113,51 +174,9 @@ public class VentanaPrincipal extends JFrame {
 
         jTabbedPane1.addTab("Registros", Registros);
 
-        jPanel2.add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1100, 640));
+        DBMS.add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1100, 640));
 
-        panelPadre.add(jPanel2, "card2");
-
-        jPanel1.setBackground(new java.awt.Color(0, 153, 153));
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jPanel3.setBackground(new java.awt.Color(0, 51, 51));
-
-        tituloLabel.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
-        tituloLabel.setForeground(new java.awt.Color(255, 255, 255));
-        tituloLabel.setText("Bienvenidos a Mini DBMS");
-
-        jButton6.setText("jButton6");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(66, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(tituloLabel)
-                        .addGap(54, 54, 54))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jButton6)
-                        .addGap(236, 236, 236))))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(245, Short.MAX_VALUE)
-                .addComponent(tituloLabel)
-                .addGap(91, 91, 91)
-                .addComponent(jButton6)
-                .addGap(234, 234, 234))
-        );
-
-        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 0, 560, 640));
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/minidbms/gui/DBMS.png"))); // NOI18N
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 150, -1, -1));
-
-        panelPadre.add(jPanel1, "card3");
+        panelPadre.add(DBMS, "card2");
 
         getContentPane().add(panelPadre, java.awt.BorderLayout.CENTER);
 
@@ -187,6 +206,11 @@ public class VentanaPrincipal extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton6MouseClicked(
+            java.awt.event.MouseEvent evt) { // GEN-FIRST:event_jButton6MouseClicked
+        Portada.setVisible(false);
+    }
+
     private void salirMItemActionPerformed(
             java.awt.event.ActionEvent evt) { // GEN-FIRST:event_salirMItemActionPerformed
         acciones.salir();
@@ -194,6 +218,8 @@ public class VentanaPrincipal extends JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Campos;
+    private javax.swing.JPanel DBMS;
+    private javax.swing.JPanel Portada;
     private javax.swing.JPanel Registros;
     private javax.swing.JMenuItem abrirArchivoMItem;
     private javax.swing.JMenuItem cerrarArchivoMItem;
@@ -205,8 +231,6 @@ public class VentanaPrincipal extends JFrame {
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
@@ -218,5 +242,6 @@ public class VentanaPrincipal extends JFrame {
     private javax.swing.JMenuItem salirMItem;
     private javax.swing.JPopupMenu.Separator sepMenuArchivos;
     private javax.swing.JLabel tituloLabel;
+    private javax.swing.JLabel tituloLabel1;
     // End of variables declaration//GEN-END:variables
 }
