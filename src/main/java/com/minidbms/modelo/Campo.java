@@ -27,11 +27,10 @@ public class Campo {
         }
 
         validarNombre(nombre);
-        validarLongitud(longitudMaxima);
+        validarLongitud(tipo, longitudMaxima);
 
-        if (!esValorCompatible(valorPredeterminado, tipo)) {
-            throw new IllegalStateException(
-                    "El valor predeterminado no es compatible con el tipo " + tipo);
+        if (!esValorCompatible(valorPredeterminado, tipo, longitudMaxima)) {
+            throw new IllegalArgumentException("El valor debe ser compatible con su tipo de campo");
         }
 
         this.id = id;
@@ -75,52 +74,54 @@ public class Campo {
         if (nuevoTipo == null) {
             throw new IllegalArgumentException("El tipo de campo no debe ser nulo");
         }
-        if (!esValorCompatible(valorPredeterminado, nuevoTipo)) {
-            throw new IllegalStateException(
+        if (!esValorCompatible(valorPredeterminado, nuevoTipo, longitudMaxima)) {
+            throw new IllegalArgumentException(
                     "El valor predeterminado no es compatible con el tipo " + nuevoTipo);
         }
         this.tipo = nuevoTipo;
     }
 
     public void reducirLongitudMaxima(int nuevaLongitudMaxima) {
+        if (tipo != TipoCampo.TEXTO) {
+            throw new IllegalStateException("Solo los campos de texto tiene longitud máxima");
+        }
         if (nuevaLongitudMaxima <= 0) {
-            throw new IllegalArgumentException("La longitud que ingresó es menor o igual a 0.");
+            throw new IllegalArgumentException("La longitud que ingresó es menor o igual a cero");
         } else if (nuevaLongitudMaxima > longitudMaxima) {
             throw new IllegalArgumentException(
                     "La longitud que ingresó es mayor que la anterior. ¡No se puede reducir!");
         }
-
-        if (!esValorCompatible(valorPredeterminado, tipo)) {
-            throw new IllegalStateException(
-                    "El valor predeterminado no es compatible con la nueva longitud");
+        if (!esValorCompatible(valorPredeterminado, tipo, nuevaLongitudMaxima)) {
+            throw new IllegalArgumentException(
+                    "El valor predeterminado no cabe en la nueva longitud máxima");
         }
         this.longitudMaxima = nuevaLongitudMaxima;
     }
 
-    private boolean esValorCompatible(String valor, TipoCampo tipo) {
+    private boolean esValorCompatible(String valor, TipoCampo tipo, int longitud) {
         if (valor == null) {
             return true;
-        }
-        if (tipo == null) {
-            return false;
         }
 
         try {
             switch (tipo) {
-                case ENTERO -> Integer.parseInt(valor);
-                case DECIMAL -> Double.parseDouble(valor);
-                case FECHA -> LocalDate.parse(valor);
-                case BOOLEANO -> {
-                    if (!valor.equalsIgnoreCase("true") && !valor.equalsIgnoreCase("false")) {
-                        return false;
-                    }
-                }
-                case TEXTO -> {
-                    return valor.length() <= longitudMaxima;
-                }
+                case ENTERO:
+                    Integer.parseInt(valor);
+                    return true;
+                case DECIMAL:
+                    Double.parseDouble(valor);
+                    return true;
+                case FECHA:
+                    LocalDate.parse(valor);
+                    return true;
+                case BOOLEANO:
+                    return valor.equalsIgnoreCase("true") || valor.equalsIgnoreCase("false");
+                case TEXTO:
+                    return valor.length() <= longitud;
+                default:
+                    return false;
             }
-            return true;
-        } catch (IllegalArgumentException e) {
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -131,8 +132,8 @@ public class Campo {
         }
     }
 
-    private void validarLongitud(int longitud) {
-        if (longitud <= 0) {
+    private void validarLongitud(TipoCampo tipo, int longitud) {
+        if (tipo == TipoCampo.TEXTO && longitud <= 0) {
             throw new IllegalArgumentException("La longitud debe ser mayor que cero");
         }
     }
