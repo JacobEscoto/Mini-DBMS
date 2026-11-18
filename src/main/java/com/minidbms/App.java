@@ -8,7 +8,6 @@ import javax.swing.SwingUtilities;
 
 public class App {
     public static void main(String[] args) {
-        System.out.println("=== Mini DBMS Project ===");
         SwingUtilities.invokeLater(
                 () -> {
                     AccionesApp acciones = new ControladorApp();

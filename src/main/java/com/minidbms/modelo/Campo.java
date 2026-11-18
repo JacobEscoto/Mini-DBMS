@@ -1,6 +1,7 @@
 package com.minidbms.modelo;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class Campo {
 
@@ -105,23 +106,29 @@ public class Campo {
 
         try {
             switch (tipo) {
-                case ENTERO:
-                    Integer.parseInt(valor);
+                case ENTERO -> {
+                    Integer.valueOf(valor);
                     return true;
-                case DECIMAL:
-                    Double.parseDouble(valor);
+                }
+                case DECIMAL -> {
+                    Double.valueOf(valor);
                     return true;
-                case FECHA:
+                }
+                case FECHA -> {
                     LocalDate.parse(valor);
                     return true;
-                case BOOLEANO:
+                }
+                case BOOLEANO -> {
                     return valor.equalsIgnoreCase("true") || valor.equalsIgnoreCase("false");
-                case TEXTO:
+                }
+                case TEXTO -> {
                     return valor.length() <= longitud;
-                default:
+                }
+                default -> {
                     return false;
+                }
             }
-        } catch (Exception ex) {
+        } catch (NumberFormatException | DateTimeParseException ex) {
             return false;
         }
     }
@@ -136,5 +143,20 @@ public class Campo {
         if (tipo == TipoCampo.TEXTO && longitud <= 0) {
             throw new IllegalArgumentException("La longitud debe ser mayor que cero");
         }
+    }
+
+    @Override
+    public String toString() {
+        return id
+                + " | "
+                + nombre
+                + " ("
+                + tipo
+                + ") | "
+                + (tipo == TipoCampo.TEXTO ? "Longitud máxima: " + longitudMaxima : "")
+                + " | "
+                + (obligatorio ? "OBLIGATORIO" : "NO OBLIGATORIO")
+                + " | Valor por defecto: "
+                + valorPredeterminado;
     }
 }
