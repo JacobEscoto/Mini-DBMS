@@ -23,20 +23,21 @@ public class Metadata {
     private int registrosEliminados;
     private int bytesLibres;
 
-    public Metadata(String nombreArchivo, int siguienteCampoId) {
+    public Metadata(String nombreArchivo /*int siguienteCampoId*/) {
         if (nombreArchivo == null) {
             throw new IllegalArgumentException("El nombre del archivo es nulo");
         } else if (nombreArchivo.trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre del archivo está vacío");
         }
-        if (siguienteCampoId <= 0) {
-            throw new IllegalArgumentException("El id del siguiente campo debe ser mayor que cero");
-        }
+        //        if (siguienteCampoId <= 0) {
+        //            throw new IllegalArgumentException("El id del siguiente campo debe ser mayor
+        // que cero");
+        //        }
         this.versionFormato = VERSION_FORMATO;
         this.nombreArchivo = nombreArchivo.trim();
 
         this.campos = new ArrayList<>();
-        this.siguienteCampoId = siguienteCampoId;
+        this.siguienteCampoId = 1;
 
         // this.inicioAvailList = -1;
         // this.politicaReutilizacion = PoliticaReutilizacion.FIRST_FIT;
@@ -56,14 +57,18 @@ public class Metadata {
         if (!esNombreUnico(nombre)) {
             throw new IllegalStateException("El campo ya existe");
         }
+
         Campo campoNuevo =
-                new Campo(
-                        siguienteCampoId,
-                        nombre,
-                        tipo,
-                        longitudMaxima,
-                        obligatorio,
-                        valorPredeterminado);
+                tipo == TipoCampo.TEXTO
+                        ? new Campo(
+                                siguienteCampoId,
+                                nombre,
+                                tipo,
+                                longitudMaxima,
+                                obligatorio,
+                                valorPredeterminado)
+                        : new Campo(
+                                siguienteCampoId, nombre, tipo, obligatorio, valorPredeterminado);
         siguienteCampoId++;
         campos.add(campoNuevo);
         return campoNuevo;
@@ -181,26 +186,33 @@ public class Metadata {
         return bytesLibres;
     }
 
-    public void LeerMetadata(BufferedReader br) throws IOException {
+    public void leer(BufferedReader br) throws IOException {
         String linea;
         String seccion = "";
 
         while ((linea = br.readLine()) != null) {
             linea = linea.trim();
 
+            if (linea.isEmpty()) {
+                continue;
+            }
+
             if (linea.equalsIgnoreCase("[ARCHIVO]")) {
                 seccion = "Archivo";
+                continue;
             } else if (linea.equalsIgnoreCase("[LLAVE_PRIMARIA]")) {
                 seccion = "Llave_primaria";
+                continue;
             } else if (linea.equalsIgnoreCase("[CAMPOS]")) {
                 seccion = "Campos";
+                continue;
             }
             switch (seccion) {
                 case "Archivo":
                     cargarArchivo(linea);
                     break;
                 case "Llave_primaria":
-                    cargarLlaveprimaria(linea);
+                    cargarLlavePrimaria(linea);
                     break;
                 case "Campos":
                     cargarCampo(linea);
@@ -211,8 +223,12 @@ public class Metadata {
 
     private void cargarArchivo(String linea) {
         String[] info = linea.split("=");
-        String clave = info[0];
-        String valor = info[1];
+        if (info.length < 2) {
+            System.out.println("Info no tiene valor: " + linea);
+            return;
+        }
+        String clave = info[0].trim();
+        String valor = info[1].trim();
         if (clave.equalsIgnoreCase("Nombre")) {
             nombreArchivo = valor;
         } else if (clave.equalsIgnoreCase("Version")) {
@@ -222,23 +238,46 @@ public class Metadata {
         }
     }
 
-    private void cargarLlaveprimaria(String linea) {
+    private void cargarLlavePrimaria(String linea) {
         String[] info = linea.split("=");
-        String clave = info[0];
-        String valor = info[1];
+        if (info.length < 2) {
+            System.out.println("Info no tiene valor: " + linea);
+            return;
+        }
+        String clave = info[0].trim();
+        String valor = info[1].trim();
         if (clave.equalsIgnoreCase("Campo")) {
-            llavePrimariaId = Integer.parseInt(valor); // Revisalo
+            llavePrimariaId = Integer.parseInt(valor);
         }
     }
 
     private void cargarCampo(String linea) {
         String[] info = linea.split("\\|");
-        String nombre = info[0];
-        TipoCampo tipo = TipoCampo.valueOf(info[1]);
-        int tamano = Integer.parseInt(info[2]);
-        boolean obligatoria = info[3].equalsIgnoreCase("true") || info[3].equalsIgnoreCase("false");
-        String valor = "";
-        agregarCampo(nombre, tipo, tamano, obligatoria, valor);
+        if (info.length < 3) {
+            System.out.println("Info no tiene valor: " + linea);
+            return;
+        }
+        String nombre = info[0].trim();
+        TipoCampo tipo = TipoCampo.valueOf(info[1].trim());
+        int tamano = 0;
+        boolean obligatoria = false;
+        String valor;
+
+        if (tipo == TipoCampo.TEXTO) {
+            if (info.length < 4) {
+                System.out.println("Formato de campo de texto incompleto: " + linea);
+                return;
+            }
+            tamano = Integer.parseInt(info[2].trim());
+            obligatoria = Boolean.parseBoolean(info[3].trim());
+            valor = info.length > 4 ? info[4].trim() : "";
+        } else {
+            obligatoria = Boolean.parseBoolean(info[2].trim());
+            valor = info.length > 3 ? info[3].trim() : "";
+        }
+
+        Campo campo = agregarCampo(nombre, tipo, tamano, obligatoria, valor);
+        System.out.println(campo);
     }
 
     // Versión del formato actual de la metadata

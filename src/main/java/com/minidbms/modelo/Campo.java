@@ -16,6 +16,32 @@ public class Campo {
             int id,
             String nombre,
             TipoCampo tipo,
+            boolean obligatorio,
+            String valorPredeterminado) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("El ID debe ser mayor que cero");
+        }
+        if (tipo == null) {
+            throw new IllegalArgumentException("El tipo de campo no debe ser nulo");
+        }
+
+        validarNombre(nombre);
+
+        if (!esValorCompatible(valorPredeterminado, tipo, longitudMaxima)) {
+            throw new IllegalArgumentException("El valor debe ser compatible con su tipo de campo");
+        }
+
+        this.id = id;
+        this.tipo = tipo;
+        this.nombre = nombre.trim();
+        this.obligatorio = obligatorio;
+        this.valorPredeterminado = valorPredeterminado;
+    }
+
+    public Campo(
+            int id,
+            String nombre,
+            TipoCampo tipo,
             int longitudMaxima,
             boolean obligatorio,
             String valorPredeterminado) {
@@ -100,7 +126,7 @@ public class Campo {
     }
 
     private boolean esValorCompatible(String valor, TipoCampo tipo, int longitud) {
-        if (valor == null) {
+        if (valor == null || valor.isBlank()) {
             return true;
         }
 
@@ -153,10 +179,10 @@ public class Campo {
                 + " ("
                 + tipo
                 + ") | "
-                + (tipo == TipoCampo.TEXTO ? "Longitud máxima: " + longitudMaxima : "")
-                + " | "
+                + (tipo == TipoCampo.TEXTO ? "Longitud máxima: " + longitudMaxima + " | " : "")
                 + (obligatorio ? "OBLIGATORIO" : "NO OBLIGATORIO")
-                + " | Valor por defecto: "
-                + valorPredeterminado;
+                + (valorPredeterminado.isBlank()
+                        ? ""
+                        : " | Valor Predeterminado: " + valorPredeterminado);
     }
 }

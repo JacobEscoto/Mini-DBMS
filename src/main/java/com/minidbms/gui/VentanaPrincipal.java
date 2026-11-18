@@ -439,11 +439,11 @@ public class VentanaPrincipal extends JFrame {
                 try {
                     FileReader fr = new FileReader(file);
                     BufferedReader br = new BufferedReader(fr);
-                    //                    metadata = new Metadata(ruta);
-                    metadata.LeerMetadata(br);
+                    metadata = new Metadata(ruta);
+                    metadata.leer(br);
                     br.close();
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, "Error al abrir el archivo");
+                    JOptionPane.showMessageDialog(null, "Error al abrir el archivo: " + e);
                     ruta = null;
                     metadata = null;
                 }
