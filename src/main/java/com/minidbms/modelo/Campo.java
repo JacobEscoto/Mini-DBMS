@@ -176,13 +176,11 @@ public class Campo {
         return id
                 + " | "
                 + nombre
-                + " ("
+                + " | "
                 + tipo
-                + ") | "
-                + (tipo == TipoCampo.TEXTO ? "Longitud máxima: " + longitudMaxima + " | " : "")
-                + (obligatorio ? "OBLIGATORIO" : "NO OBLIGATORIO")
-                + (valorPredeterminado.isBlank()
-                        ? ""
-                        : " | Valor Predeterminado: " + valorPredeterminado);
+                + " | "
+                + (tipo == TipoCampo.TEXTO ? longitudMaxima + " | " : "")
+                + (obligatorio ? "true" : "false")
+                + valorPredeterminado;
     }
 }

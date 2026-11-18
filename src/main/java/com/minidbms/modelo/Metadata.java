@@ -1,6 +1,10 @@
 package com.minidbms.modelo;
 
+import com.minidbms.excepciones.ArchivoInvalidoException;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -186,7 +190,7 @@ public class Metadata {
         return bytesLibres;
     }
 
-    public static Metadata leer(BufferedReader br) {
+    public static Metadata leer(BufferedReader br) throws ArchivoInvalidoException {
         if (br == null) {
             throw new IllegalArgumentException("");
         }
@@ -199,6 +203,7 @@ public class Metadata {
         Metadata metadata;
         List<Campo> campos = new ArrayList<>();
 
+        boolean esPrimeraLinea = true;
         try {
             while ((linea = br.readLine()) != null) {
                 linea = linea.trim();
@@ -206,6 +211,12 @@ public class Metadata {
                 if (linea.isEmpty()) {
                     continue;
                 }
+
+                if (esPrimeraLinea && !linea.equals(FIRMA_FORMATO)) {
+                    throw new ArchivoInvalidoException(
+                            "La firma del archivo no coincide: " + linea);
+                }
+                esPrimeraLinea = false;
 
                 String lineaUpper = linea.toUpperCase().replace("[", "").replace("]", "");
                 if (lineaUpper.equals("ARCHIVO")
@@ -282,7 +293,10 @@ public class Metadata {
                     }
                 }
             }
-        } catch (IOException | NumberFormatException | IllegalStateException ex) {
+        } catch (IOException
+                | IllegalStateException
+                | IllegalArgumentException
+                | ArrayIndexOutOfBoundsException ex) {
             return null;
         }
         metadata = new Metadata(nombreArchivo, siguienteCampoId);
@@ -294,10 +308,23 @@ public class Metadata {
                 return null;
             }
         }
-        for (Campo campo : metadata.obtenerCampos()) {
-            System.out.println(campo);
-        }
         return metadata;
+    }
+
+    public void guardar(File file) throws IOException {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+            bw.write(FIRMA_FORMATO);
+            bw.write("[ARCHIVO]\n");
+            bw.write("Nombre=" + nombreArchivo.substring(0, nombreArchivo.length() - 4) + "\n");
+            bw.write("Version=" + versionFormato + "\n");
+            bw.write("CampoSiguienteId=" + siguienteCampoId + "\n");
+            bw.write("[LLAVE_PRIMARIA]\n");
+            bw.write("Campo=" + llavePrimariaId + "\n");
+            bw.write("[CAMPOS]\n");
+            for (Campo campo : campos) {
+                bw.write(campo.toString());
+            }
+        }
     }
 
     private static String[] obtenerInformacion(String linea, String regex, int cantidad) {
@@ -316,4 +343,7 @@ public class Metadata {
     private static final int CANTIDAD_INFO_ARCHIVO = 2;
     private static final int CANTIDAD_MIN_CAMPO_TEXTO = 4;
     private static final int CANTIDAD_MIN_CAMPO_NON_TEXTO = 3;
+
+    // Firma única del formato propio de archivo
+    public static final String FIRMA_FORMATO = "DBMS-AFJ";
 }
