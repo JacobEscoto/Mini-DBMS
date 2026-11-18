@@ -5,8 +5,11 @@ import com.minidbms.modelo.Campo;
 import com.minidbms.modelo.Metadata;
 import com.minidbms.modelo.TipoCampo;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -481,6 +484,7 @@ public class VentanaPrincipal extends JFrame {
 
         crearArchivoMItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         crearArchivoMItem.setText("Crear Archivo");
+        crearArchivoMItem.addActionListener(this::crearArchivoMItemActionPerformed);
         menuArchivo.add(crearArchivoMItem);
 
         abrirArchivoMItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
@@ -508,18 +512,71 @@ public class VentanaPrincipal extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void crearArchivoMItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearArchivoMItemActionPerformed
+        // TODO add your handling code here:
+        // val
+        if (ruta != null) {
+            JOptionPane.showMessageDialog(this, "Ya hay un archivo abierto");
+            return;
+        }
+        String nombre
+                = JOptionPane.showInputDialog(this, "Ingrese el nombre del archivo para crear:");
+        if (nombre == null) {
+            return;
+        }
+        nombre = nombre.trim();
+        if (nombre.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Escriba un nombre para el archivo.");
+            return;
+        }
+
+        if (!nombre.endsWith(".txt")) {
+            nombre += ".txt";
+        }
+
+        try {
+            File file = new File(nombre);
+            if (file.createNewFile()) {
+                ruta = file.getAbsolutePath();
+                metadata = new Metadata(file.getName());
+                guardarMetadata(file, metadata);
+                Portada.setVisible(false);
+                DBMS.setVisible(true);
+                JOptionPane.showMessageDialog(this, "Archivo creado exitosamente.");
+            } else {
+                JOptionPane.showMessageDialog(this, "El archivo ya existe.");
+            }
+        } catch (IllegalArgumentException | IOException e) {
+            ruta = null;
+            metadata = null;
+            JOptionPane.showMessageDialog(null, "Error al crear el archivo");
+        }
+    }//GEN-LAST:event_crearArchivoMItemActionPerformed
+
+    private void guardarMetadata(File file, Metadata meta) throws IOException {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+            bw.write("[ARCHIVO]\n");
+            bw.write("Nombre=" + meta.obtenerNombreArchivo().substring(0, meta.obtenerNombreArchivo().length() - 4) + "\n");
+            bw.write("Version=" + meta.obtenerVersionFormato() + "\n");
+            bw.write("CampoSiguienteId=" + (meta.obtenerCampos().size() + 1) + "\n");
+            bw.write("[LLAVE_PRIMARIA]\n");
+            bw.write("Campo=" + meta.obtenerLlavePrimariaId() + "\n");
+            bw.write("[CAMPOS]\n");
+        }
+    }
+
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) { // GEN-FIRST:event_jButton1MouseClicked
         if (!NombreCC.getText().equalsIgnoreCase("")) {
             if ((int) TamanoCC.getValue() >= 0) {
-                String nombre=NombreCC.getText();
-                TipoCampo tipo=TipoCampo.valueOf(TipoCC.getItemAt(TipoCC.getSelectedIndex()).toString());
-                int tamano=(int)TamanoCC.getValue();
-                boolean obligatorio=ObligatorioCC.isSelected();
+                String nombre = NombreCC.getText();
+                TipoCampo tipo = TipoCampo.valueOf(TipoCC.getItemAt(TipoCC.getSelectedIndex()).toString());
+                int tamano = (int) TamanoCC.getValue();
+                boolean obligatorio = ObligatorioCC.isSelected();
                 // Falta un dato que no entiendo, pero Jacob sabe
-                if(LlaveCC.isSelected()){
-                    Campo campo=metadata.agregarCampo(nombre, tipo, tamano, obligatorio, nombre/*este parte*/); // Jacob sabe como se hace
+                if (LlaveCC.isSelected()) {
+                    Campo campo = metadata.agregarCampo(nombre, tipo, tamano, obligatorio, nombre/*este parte*/); // Jacob sabe como se hace
                     metadata.establecerLlavePrimaria(campo.obtenerId());
-                }else{
+                } else {
                     metadata.agregarCampo(nombre, tipo, tamano, obligatorio, nombre/*este parte*/);
                 }
             }
