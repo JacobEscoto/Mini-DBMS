@@ -36,3 +36,7 @@ lib/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Archivos de prueba
+*.txt
+*.json
