@@ -8,25 +8,40 @@ public class Metadata {
     private int versionFormato;
 
     private ArrayList<Campo> campos;
-    private int campoSigId;
+    private int siguienteCampoId;
     private int llavePrimariaId;
 
-    private final int minTamanioHueco;
-    private int inicioAvailList;
-    private PoliticaReutilizacion politicaReutilizacion;
+    // private final int minTamanioHueco;
+    private long encabezado;
+    // private PoliticaReutilizacion politicaReutilizacion;
 
     // Contadores
     private int registrosActivos;
     private int registrosEliminados;
     private int bytesLibres;
 
-    public Metadata(String nombreArchivo, int minTamanioHueco, int campoSigId) {
-        this.nombreArchivo = nombreArchivo;
+    public Metadata(String nombreArchivo, int siguienteCampoId) {
+        if (nombreArchivo == null) {
+            throw new IllegalArgumentException("El nombre del archivo es nulo");
+        } else if (nombreArchivo.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del archivo está vacío");
+        }
+        if (siguienteCampoId <= 0) {
+            throw new IllegalArgumentException("El id del siguiente campo debe ser mayor que cero");
+        }
+        this.versionFormato = VERSION_FORMATO;
+        this.nombreArchivo = nombreArchivo.trim();
+
         this.campos = new ArrayList<>();
-        this.campoSigId = campoSigId;
-        this.minTamanioHueco = minTamanioHueco;
-        this.inicioAvailList = -1;
-        this.politicaReutilizacion = PoliticaReutilizacion.FIRST_FIT;
+        this.siguienteCampoId = siguienteCampoId;
+
+        // this.inicioAvailList = -1;
+        // this.politicaReutilizacion = PoliticaReutilizacion.FIRST_FIT;
+        this.llavePrimariaId = -1;
+
+        // this.registrosActivos = 0;
+        // this.registrosEliminados = 0;
+        // this.bytesLibres = 0;
     }
 
     public Campo agregarCampo(
@@ -40,8 +55,8 @@ public class Metadata {
         }
         Campo campoNuevo =
                 new Campo(
-                        campoSigId, tipo, nombre, longitudMaxima, obligatorio, valorPredeterminado);
-        campoSigId++;
+                        siguienteCampoId, tipo, nombre, longitudMaxima, obligatorio, valorPredeterminado);
+        siguienteCampoId++;
         campos.add(campoNuevo);
         return campoNuevo;
     }
@@ -65,7 +80,23 @@ public class Metadata {
         if (campo == null) {
             throw new IllegalStateException("El campo a renombrar no se encuentra");
         }
-        campo.renombrar(nuevoNombre);
+        campo.renombrar(nuevoNombre.trim());
+    }
+
+    public void reducirLongitudCampo(int id, int longitudMaxima) {
+        Campo campo = buscarCampoPorId(id);
+        if (campo == null) {
+            throw new IllegalStateException("El campo a reducir la longitud es inexistente");
+        }
+        campo.reducirLongitudMaxima(longitudMaxima);
+    }
+
+    public void cambiarTipoCampo(int id, TipoCampo nuevoTipo) {
+        Campo campo = buscarCampoPorId(id);
+        if (campo == null) {
+            throw new IllegalStateException("El campo a modificar es inexistente");
+        }
+        campo.cambiarTipo(nuevoTipo);
     }
 
     public void borrarCampo(int id) {
@@ -78,16 +109,27 @@ public class Metadata {
                     "El campo no se puede eliminar porque es llave primaria");
         }
         campos.remove(campo);
-        registrosEliminados++;
     }
 
     public void establecerLlavePrimaria(int id) {
-        if (buscarCampoPorId(id) == null) {
+        Campo campo = buscarCampoPorId(id);
+        if (campo == null) {
             throw new IllegalStateException(
                     "El campo a establecer como llave primaria es inexistente");
         }
+        if (!campo.esObligatorio()) {
+            throw new IllegalStateException(
+                    "El campo debe ser obligatorio para establecerse como llave primaria");
+        }
         llavePrimariaId = id;
     }
+
+//    public void establecerPoliticaReutilizacion(PoliticaReutilizacion politicaReutilizacion) {
+//        if (politicaReutilizacion == null) {
+//            throw new IllegalArgumentException("La política de reutilización es nula");
+//        }
+//        this.politicaReutilizacion = politicaReutilizacion;
+//    }
 
     private boolean esLlavePrimaria(int id) {
         return llavePrimariaId != -1 && llavePrimariaId == id;
@@ -105,21 +147,17 @@ public class Metadata {
         return List.copyOf(campos);
     }
 
-    public int obtenerInicioAvailList() {
-        return inicioAvailList;
+    public long obtenerEncabezado() {
+        return encabezado;
     }
 
     public int obtenerVersionFormato() {
         return versionFormato;
     }
 
-    public int obtenerMinTamanioHueco() {
-        return minTamanioHueco;
-    }
-
-    public PoliticaReutilizacion obtenerPoliticaReutilizacion() {
-        return politicaReutilizacion;
-    }
+//    public PoliticaReutilizacion obtenerPoliticaReutilizacion() {
+//        return politicaReutilizacion;
+//    }
 
     public int obtenerLlavePrimariaId() {
         return llavePrimariaId;
@@ -136,4 +174,7 @@ public class Metadata {
     public int obtenerBytesLibres() {
         return bytesLibres;
     }
+
+    // Versión del formato actual de la metadata
+    public static final int VERSION_FORMATO = 1;
 }
