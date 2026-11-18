@@ -45,8 +45,8 @@ public class Metadata {
     }
 
     public Campo agregarCampo(
-            TipoCampo tipo,
             String nombre,
+            TipoCampo tipo,
             int longitudMaxima,
             boolean obligatorio,
             String valorPredeterminado) {
@@ -55,7 +55,12 @@ public class Metadata {
         }
         Campo campoNuevo =
                 new Campo(
-                        siguienteCampoId, tipo, nombre, longitudMaxima, obligatorio, valorPredeterminado);
+                        siguienteCampoId,
+                        nombre,
+                        tipo,
+                        longitudMaxima,
+                        obligatorio,
+                        valorPredeterminado);
         siguienteCampoId++;
         campos.add(campoNuevo);
         return campoNuevo;
@@ -124,12 +129,12 @@ public class Metadata {
         llavePrimariaId = id;
     }
 
-//    public void establecerPoliticaReutilizacion(PoliticaReutilizacion politicaReutilizacion) {
-//        if (politicaReutilizacion == null) {
-//            throw new IllegalArgumentException("La política de reutilización es nula");
-//        }
-//        this.politicaReutilizacion = politicaReutilizacion;
-//    }
+    //    public void establecerPoliticaReutilizacion(PoliticaReutilizacion politicaReutilizacion) {
+    //        if (politicaReutilizacion == null) {
+    //            throw new IllegalArgumentException("La política de reutilización es nula");
+    //        }
+    //        this.politicaReutilizacion = politicaReutilizacion;
+    //    }
 
     private boolean esLlavePrimaria(int id) {
         return llavePrimariaId != -1 && llavePrimariaId == id;
@@ -155,9 +160,9 @@ public class Metadata {
         return versionFormato;
     }
 
-//    public PoliticaReutilizacion obtenerPoliticaReutilizacion() {
-//        return politicaReutilizacion;
-//    }
+    //    public PoliticaReutilizacion obtenerPoliticaReutilizacion() {
+    //        return politicaReutilizacion;
+    //    }
 
     public int obtenerLlavePrimariaId() {
         return llavePrimariaId;
@@ -174,6 +179,8 @@ public class Metadata {
     public int obtenerBytesLibres() {
         return bytesLibres;
     }
+
+    public static void LeerMetadata() {}
 
     // Versión del formato actual de la metadata
     public static final int VERSION_FORMATO = 1;

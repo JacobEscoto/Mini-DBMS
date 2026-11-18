@@ -6,16 +6,16 @@ import java.time.format.DateTimeParseException;
 public class Campo {
 
     private final int id;
-    private TipoCampo tipo;
     private String nombre;
+    private TipoCampo tipo;
     private int longitudMaxima;
     private final boolean obligatorio;
     private final String valorPredeterminado;
 
     public Campo(
             int id,
-            TipoCampo tipo,
             String nombre,
+            TipoCampo tipo,
             int longitudMaxima,
             boolean obligatorio,
             String valorPredeterminado) {
