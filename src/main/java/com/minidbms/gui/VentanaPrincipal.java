@@ -1,11 +1,19 @@
 package com.minidbms.gui;
 
 import com.minidbms.gui.acciones.AccionesApp;
+import com.minidbms.modelo.Metadata;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class VentanaPrincipal extends JFrame {
 
     private final AccionesApp acciones;
+    static String ruta = null;
+    static Metadata metadata = null;
 
     public VentanaPrincipal(AccionesApp acciones) {
         this.acciones = acciones;
@@ -383,6 +391,13 @@ public class VentanaPrincipal extends JFrame {
                 javax.swing.KeyStroke.getKeyStroke(
                         java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         abrirArchivoMItem.setText("Abrir Archivo");
+        abrirArchivoMItem.addMouseListener(
+                new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent evt) {
+                        abrirArchivoMItemMouseClicked(evt);
+                    }
+                });
+        abrirArchivoMItem.addActionListener(this::abrirArchivoMItemActionPerformed);
         menuArchivo.add(abrirArchivoMItem);
 
         guardarArchivoMItem1.setAccelerator(
@@ -412,6 +427,33 @@ public class VentanaPrincipal extends JFrame {
 
         pack();
     } // </editor-fold>//GEN-END:initComponents
+
+    private void abrirArchivoMItemActionPerformed(
+            java.awt.event.ActionEvent evt) { // GEN-FIRST:event_abrirArchivoMItemActionPerformed
+        if (ruta == null) {
+            JFileChooser selector = new JFileChooser();
+            int seleccionado = selector.showOpenDialog(null);
+            if (seleccionado == JFileChooser.APPROVE_OPTION) {
+                File file = selector.getSelectedFile();
+                ruta = file.getAbsolutePath();
+                try {
+                    FileReader fr = new FileReader(file);
+                    BufferedReader br = new BufferedReader(fr);
+                    //                    metadata = new Metadata(ruta);
+                    metadata.LeerMetadata(br);
+                    br.close();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Error al abrir el archivo");
+                    ruta = null;
+                    metadata = null;
+                }
+            }
+        }
+    } // GEN-LAST:event_abrirArchivoMItemActionPerformed
+
+    private void abrirArchivoMItemMouseClicked(
+            java.awt.event.MouseEvent evt) { // GEN-FIRST:event_abrirArchivoMItemMouseClicked
+    } // GEN-LAST:event_abrirArchivoMItemMouseClicked
 
     private void jButton6MouseClicked(
             java.awt.event.MouseEvent evt) { // GEN-FIRST:event_jButton6MouseClicked

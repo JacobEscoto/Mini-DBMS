@@ -1,9 +1,12 @@
 package com.minidbms.modelo;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Metadata {
+
     private String nombreArchivo;
     private int versionFormato;
 
@@ -135,7 +138,6 @@ public class Metadata {
     //        }
     //        this.politicaReutilizacion = politicaReutilizacion;
     //    }
-
     private boolean esLlavePrimaria(int id) {
         return llavePrimariaId != -1 && llavePrimariaId == id;
     }
@@ -163,7 +165,6 @@ public class Metadata {
     //    public PoliticaReutilizacion obtenerPoliticaReutilizacion() {
     //        return politicaReutilizacion;
     //    }
-
     public int obtenerLlavePrimariaId() {
         return llavePrimariaId;
     }
@@ -180,7 +181,65 @@ public class Metadata {
         return bytesLibres;
     }
 
-    public static void LeerMetadata() {}
+    public void LeerMetadata(BufferedReader br) throws IOException {
+        String linea;
+        String seccion = "";
+
+        while ((linea = br.readLine()) != null) {
+            linea = linea.trim();
+
+            if (linea.equalsIgnoreCase("[ARCHIVO]")) {
+                seccion = "Archivo";
+            } else if (linea.equalsIgnoreCase("[LLAVE_PRIMARIA]")) {
+                seccion = "Llave_primaria";
+            } else if (linea.equalsIgnoreCase("[CAMPOS]")) {
+                seccion = "Campos";
+            }
+            switch (seccion) {
+                case "Archivo":
+                    cargarArchivo(linea);
+                    break;
+                case "Llave_primaria":
+                    cargarLlaveprimaria(linea);
+                    break;
+                case "Campos":
+                    cargarCampo(linea);
+                    break;
+            }
+        }
+    }
+
+    private void cargarArchivo(String linea) {
+        String[] info = linea.split("=");
+        String clave = info[0];
+        String valor = info[1];
+        if (clave.equalsIgnoreCase("Nombre")) {
+            nombreArchivo = valor;
+        } else if (clave.equalsIgnoreCase("Version")) {
+            versionFormato = Integer.parseInt(valor);
+        } else if (clave.equalsIgnoreCase("CampoSiguienteId")) {
+            siguienteCampoId = Integer.parseInt(valor);
+        }
+    }
+
+    private void cargarLlaveprimaria(String linea) {
+        String[] info = linea.split("=");
+        String clave = info[0];
+        String valor = info[1];
+        if (clave.equalsIgnoreCase("Campo")) {
+            llavePrimariaId = Integer.parseInt(valor); // Revisalo
+        }
+    }
+
+    private void cargarCampo(String linea) {
+        String[] info = linea.split("\\|");
+        String nombre = info[0];
+        TipoCampo tipo = TipoCampo.valueOf(info[1]);
+        int tamano = Integer.parseInt(info[2]);
+        boolean obligatoria = info[3].equalsIgnoreCase("true") || info[3].equalsIgnoreCase("false");
+        String valor = "";
+        agregarCampo(nombre, tipo, tamano, obligatoria, valor);
+    }
 
     // Versión del formato actual de la metadata
     public static final int VERSION_FORMATO = 1;
