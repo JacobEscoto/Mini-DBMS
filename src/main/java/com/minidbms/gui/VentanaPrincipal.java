@@ -69,16 +69,6 @@ public class VentanaPrincipal extends JFrame {
         Agregarcampo_jButton = new javax.swing.JButton();
         Modificar_Listar_jButton = new javax.swing.JButton();
         Borrarcampo_Button = new javax.swing.JButton();
-        Modificar_ListarCampo = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        ListaCampo = new javax.swing.JTable();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
-        NombreMLCampo = new javax.swing.JTextField();
-        TamanoMLCampo = new javax.swing.JSpinner();
-        TipoMLCampo = new javax.swing.JComboBox<>();
         CrearCampo = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -89,6 +79,18 @@ public class VentanaPrincipal extends JFrame {
         LlaveCC = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
         ObligatorioCC = new javax.swing.JCheckBox();
+        jLabel9 = new javax.swing.JLabel();
+        valorPredeterminadoCC = new javax.swing.JTextField();
+        Modificar_ListarCampo = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        ListaCampo = new javax.swing.JTable();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
+        NombreMLCampo = new javax.swing.JTextField();
+        TamanoMLCampo = new javax.swing.JSpinner();
+        TipoMLCampo = new javax.swing.JComboBox<>();
         BorrarCampo = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         ListaCampo1 = new javax.swing.JTable();
@@ -246,6 +248,246 @@ public class VentanaPrincipal extends JFrame {
                 Borrarcampo_Button,
                 new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 390, 260, 41));
 
+        CrearCampo.setBackground(new java.awt.Color(0, 153, 153));
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel3.setText("Nombre:");
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel4.setText("Valor Predeterminado:");
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel5.setText("Tamaño:");
+
+        TamanoCC.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+
+        TipoCC.setModel(
+                new javax.swing.DefaultComboBoxModel<>(
+                        new String[] {"ENTERO", "DECIMAL", "FECHA", "TEXTO", "BOOLEANO"}));
+
+        LlaveCC.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        LlaveCC.setText("Llave primaria");
+
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jButton1.setText("Crear");
+        jButton1.addMouseListener(
+                new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent evt) {
+                        jButton1MouseClicked(evt);
+                    }
+                });
+
+        ObligatorioCC.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        ObligatorioCC.setText("Obligatorio");
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel9.setText("Tipo:");
+
+        javax.swing.GroupLayout CrearCampoLayout = new javax.swing.GroupLayout(CrearCampo);
+        CrearCampo.setLayout(CrearCampoLayout);
+        CrearCampoLayout.setHorizontalGroup(
+                CrearCampoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(
+                                CrearCampoLayout.createSequentialGroup()
+                                        .addGroup(
+                                                CrearCampoLayout.createParallelGroup(
+                                                                javax.swing.GroupLayout.Alignment
+                                                                        .TRAILING)
+                                                        .addComponent(
+                                                                TamanoCC,
+                                                                javax.swing.GroupLayout
+                                                                        .PREFERRED_SIZE,
+                                                                165,
+                                                                javax.swing.GroupLayout
+                                                                        .PREFERRED_SIZE)
+                                                        .addGroup(
+                                                                CrearCampoLayout
+                                                                        .createParallelGroup(
+                                                                                javax.swing
+                                                                                        .GroupLayout
+                                                                                        .Alignment
+                                                                                        .LEADING)
+                                                                        .addGroup(
+                                                                                CrearCampoLayout
+                                                                                        .createSequentialGroup()
+                                                                                        .addGap(
+                                                                                                130,
+                                                                                                130,
+                                                                                                130)
+                                                                                        .addComponent(
+                                                                                                jLabel3))
+                                                                        .addGroup(
+                                                                                CrearCampoLayout
+                                                                                        .createSequentialGroup()
+                                                                                        .addGap(
+                                                                                                102,
+                                                                                                102,
+                                                                                                102)
+                                                                                        .addComponent(
+                                                                                                NombreCC,
+                                                                                                javax
+                                                                                                        .swing
+                                                                                                        .GroupLayout
+                                                                                                        .PREFERRED_SIZE,
+                                                                                                165,
+                                                                                                javax
+                                                                                                        .swing
+                                                                                                        .GroupLayout
+                                                                                                        .PREFERRED_SIZE)))
+                                                        .addComponent(ObligatorioCC))
+                                        .addPreferredGap(
+                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                80,
+                                                Short.MAX_VALUE)
+                                        .addGroup(
+                                                CrearCampoLayout.createParallelGroup(
+                                                                javax.swing.GroupLayout.Alignment
+                                                                        .LEADING)
+                                                        .addComponent(
+                                                                TipoCC,
+                                                                javax.swing.GroupLayout.Alignment
+                                                                        .TRAILING,
+                                                                javax.swing.GroupLayout
+                                                                        .PREFERRED_SIZE,
+                                                                165,
+                                                                javax.swing.GroupLayout
+                                                                        .PREFERRED_SIZE)
+                                                        .addComponent(
+                                                                LlaveCC,
+                                                                javax.swing.GroupLayout.Alignment
+                                                                        .TRAILING)
+                                                        .addComponent(
+                                                                valorPredeterminadoCC,
+                                                                javax.swing.GroupLayout.Alignment
+                                                                        .TRAILING,
+                                                                javax.swing.GroupLayout
+                                                                        .PREFERRED_SIZE,
+                                                                162,
+                                                                javax.swing.GroupLayout
+                                                                        .PREFERRED_SIZE))
+                                        .addGap(90, 90, 90))
+                        .addGroup(
+                                CrearCampoLayout.createSequentialGroup()
+                                        .addGap(235, 235, 235)
+                                        .addComponent(
+                                                jButton1,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                137,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addContainerGap(
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                Short.MAX_VALUE))
+                        .addGroup(
+                                CrearCampoLayout.createSequentialGroup()
+                                        .addGap(132, 132, 132)
+                                        .addComponent(jLabel5)
+                                        .addPreferredGap(
+                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                Short.MAX_VALUE)
+                                        .addComponent(jLabel4)
+                                        .addGap(46, 46, 46))
+                        .addGroup(
+                                CrearCampoLayout.createParallelGroup(
+                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(
+                                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                                CrearCampoLayout.createSequentialGroup()
+                                                        .addContainerGap(431, Short.MAX_VALUE)
+                                                        .addComponent(jLabel9)
+                                                        .addGap(131, 131, 131))));
+        CrearCampoLayout.setVerticalGroup(
+                CrearCampoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(
+                                CrearCampoLayout.createSequentialGroup()
+                                        .addGap(58, 58, 58)
+                                        .addGroup(
+                                                CrearCampoLayout.createParallelGroup(
+                                                                javax.swing.GroupLayout.Alignment
+                                                                        .TRAILING)
+                                                        .addComponent(
+                                                                TipoCC,
+                                                                javax.swing.GroupLayout
+                                                                        .PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout
+                                                                        .DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout
+                                                                        .PREFERRED_SIZE)
+                                                        .addGroup(
+                                                                CrearCampoLayout
+                                                                        .createSequentialGroup()
+                                                                        .addComponent(jLabel3)
+                                                                        .addGap(18, 18, 18)
+                                                                        .addComponent(
+                                                                                NombreCC,
+                                                                                javax.swing
+                                                                                        .GroupLayout
+                                                                                        .PREFERRED_SIZE,
+                                                                                javax.swing
+                                                                                        .GroupLayout
+                                                                                        .DEFAULT_SIZE,
+                                                                                javax.swing
+                                                                                        .GroupLayout
+                                                                                        .PREFERRED_SIZE)))
+                                        .addGap(35, 35, 35)
+                                        .addGroup(
+                                                CrearCampoLayout.createParallelGroup(
+                                                                javax.swing.GroupLayout.Alignment
+                                                                        .BASELINE)
+                                                        .addComponent(jLabel5)
+                                                        .addComponent(jLabel4))
+                                        .addPreferredGap(
+                                                javax.swing.LayoutStyle.ComponentPlacement
+                                                        .UNRELATED)
+                                        .addGroup(
+                                                CrearCampoLayout.createParallelGroup(
+                                                                javax.swing.GroupLayout.Alignment
+                                                                        .BASELINE)
+                                                        .addComponent(
+                                                                TamanoCC,
+                                                                javax.swing.GroupLayout
+                                                                        .PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout
+                                                                        .DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout
+                                                                        .PREFERRED_SIZE)
+                                                        .addComponent(
+                                                                valorPredeterminadoCC,
+                                                                javax.swing.GroupLayout
+                                                                        .PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout
+                                                                        .DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout
+                                                                        .PREFERRED_SIZE))
+                                        .addPreferredGap(
+                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                52,
+                                                Short.MAX_VALUE)
+                                        .addGroup(
+                                                CrearCampoLayout.createParallelGroup(
+                                                                javax.swing.GroupLayout.Alignment
+                                                                        .BASELINE)
+                                                        .addComponent(LlaveCC)
+                                                        .addComponent(ObligatorioCC))
+                                        .addGap(54, 54, 54)
+                                        .addComponent(
+                                                jButton1,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                48,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(49, 49, 49))
+                        .addGroup(
+                                CrearCampoLayout.createParallelGroup(
+                                                javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(
+                                                CrearCampoLayout.createSequentialGroup()
+                                                        .addGap(68, 68, 68)
+                                                        .addComponent(jLabel9)
+                                                        .addContainerGap(370, Short.MAX_VALUE))));
+
+        Campos.add(
+                CrearCampo, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 60, 620, 470));
+
         Modificar_ListarCampo.setBackground(new java.awt.Color(0, 153, 153));
 
         ListaCampo.setModel(
@@ -270,6 +512,8 @@ public class VentanaPrincipal extends JFrame {
 
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton2.setText("Modificar");
+
+        TamanoMLCampo.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
         TipoMLCampo.setModel(
                 new javax.swing.DefaultComboBoxModel<>(
@@ -440,235 +684,6 @@ public class VentanaPrincipal extends JFrame {
         Campos.add(
                 Modificar_ListarCampo,
                 new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 60, 620, 470));
-
-        CrearCampo.setBackground(new java.awt.Color(0, 153, 153));
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel3.setText("Nombre:");
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel4.setText("Tipo:");
-
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel5.setText("Tamaño:");
-
-        TamanoCC.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
-
-        TipoCC.setModel(
-                new javax.swing.DefaultComboBoxModel<>(
-                        new String[] {"ENTERO", "DECIMAL", "FECHA", "TEXTO", "BOOLEANO"}));
-
-        LlaveCC.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        LlaveCC.setText("Llave primaria");
-
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jButton1.setText("Crear");
-        jButton1.addMouseListener(
-                new java.awt.event.MouseAdapter() {
-                    public void mouseClicked(java.awt.event.MouseEvent evt) {
-                        jButton1MouseClicked(evt);
-                    }
-                });
-
-        ObligatorioCC.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        ObligatorioCC.setText("Obligatorio");
-
-        javax.swing.GroupLayout CrearCampoLayout = new javax.swing.GroupLayout(CrearCampo);
-        CrearCampo.setLayout(CrearCampoLayout);
-        CrearCampoLayout.setHorizontalGroup(
-                CrearCampoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(
-                                CrearCampoLayout.createSequentialGroup()
-                                        .addGap(237, 237, 237)
-                                        .addComponent(
-                                                jButton1,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                137,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addContainerGap(
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                Short.MAX_VALUE))
-                        .addGroup(
-                                CrearCampoLayout.createSequentialGroup()
-                                        .addGroup(
-                                                CrearCampoLayout.createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .LEADING)
-                                                        .addGroup(
-                                                                CrearCampoLayout
-                                                                        .createSequentialGroup()
-                                                                        .addGap(133, 133, 133)
-                                                                        .addComponent(jLabel5))
-                                                        .addGroup(
-                                                                CrearCampoLayout
-                                                                        .createSequentialGroup()
-                                                                        .addGap(130, 130, 130)
-                                                                        .addComponent(jLabel3))
-                                                        .addGroup(
-                                                                CrearCampoLayout
-                                                                        .createSequentialGroup()
-                                                                        .addGap(102, 102, 102)
-                                                                        .addGroup(
-                                                                                CrearCampoLayout
-                                                                                        .createParallelGroup(
-                                                                                                javax
-                                                                                                        .swing
-                                                                                                        .GroupLayout
-                                                                                                        .Alignment
-                                                                                                        .LEADING,
-                                                                                                false)
-                                                                                        .addComponent(
-                                                                                                TamanoCC,
-                                                                                                javax
-                                                                                                        .swing
-                                                                                                        .GroupLayout
-                                                                                                        .DEFAULT_SIZE,
-                                                                                                165,
-                                                                                                Short
-                                                                                                        .MAX_VALUE)
-                                                                                        .addComponent(
-                                                                                                NombreCC))))
-                                        .addPreferredGap(
-                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                                                80,
-                                                Short.MAX_VALUE)
-                                        .addGroup(
-                                                CrearCampoLayout.createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .LEADING)
-                                                        .addGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .TRAILING,
-                                                                CrearCampoLayout
-                                                                        .createSequentialGroup()
-                                                                        .addComponent(jLabel4)
-                                                                        .addGap(141, 141, 141))
-                                                        .addGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .TRAILING,
-                                                                CrearCampoLayout
-                                                                        .createSequentialGroup()
-                                                                        .addGroup(
-                                                                                CrearCampoLayout
-                                                                                        .createParallelGroup(
-                                                                                                javax
-                                                                                                        .swing
-                                                                                                        .GroupLayout
-                                                                                                        .Alignment
-                                                                                                        .TRAILING)
-                                                                                        .addComponent(
-                                                                                                TipoCC,
-                                                                                                javax
-                                                                                                        .swing
-                                                                                                        .GroupLayout
-                                                                                                        .PREFERRED_SIZE,
-                                                                                                165,
-                                                                                                javax
-                                                                                                        .swing
-                                                                                                        .GroupLayout
-                                                                                                        .PREFERRED_SIZE)
-                                                                                        .addGroup(
-                                                                                                CrearCampoLayout
-                                                                                                        .createParallelGroup(
-                                                                                                                javax
-                                                                                                                        .swing
-                                                                                                                        .GroupLayout
-                                                                                                                        .Alignment
-                                                                                                                        .LEADING)
-                                                                                                        .addComponent(
-                                                                                                                LlaveCC)
-                                                                                                        .addComponent(
-                                                                                                                ObligatorioCC)))
-                                                                        .addGap(90, 90, 90)))));
-        CrearCampoLayout.setVerticalGroup(
-                CrearCampoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(
-                                CrearCampoLayout.createSequentialGroup()
-                                        .addGap(58, 58, 58)
-                                        .addGroup(
-                                                CrearCampoLayout.createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .TRAILING)
-                                                        .addGroup(
-                                                                CrearCampoLayout
-                                                                        .createSequentialGroup()
-                                                                        .addComponent(jLabel4)
-                                                                        .addGap(18, 18, 18)
-                                                                        .addComponent(
-                                                                                TipoCC,
-                                                                                javax.swing
-                                                                                        .GroupLayout
-                                                                                        .PREFERRED_SIZE,
-                                                                                javax.swing
-                                                                                        .GroupLayout
-                                                                                        .DEFAULT_SIZE,
-                                                                                javax.swing
-                                                                                        .GroupLayout
-                                                                                        .PREFERRED_SIZE))
-                                                        .addGroup(
-                                                                CrearCampoLayout
-                                                                        .createSequentialGroup()
-                                                                        .addComponent(jLabel3)
-                                                                        .addGap(18, 18, 18)
-                                                                        .addComponent(
-                                                                                NombreCC,
-                                                                                javax.swing
-                                                                                        .GroupLayout
-                                                                                        .PREFERRED_SIZE,
-                                                                                javax.swing
-                                                                                        .GroupLayout
-                                                                                        .DEFAULT_SIZE,
-                                                                                javax.swing
-                                                                                        .GroupLayout
-                                                                                        .PREFERRED_SIZE)))
-                                        .addGap(66, 66, 66)
-                                        .addGroup(
-                                                CrearCampoLayout.createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .BASELINE)
-                                                        .addComponent(jLabel5)
-                                                        .addComponent(ObligatorioCC))
-                                        .addGroup(
-                                                CrearCampoLayout.createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .LEADING)
-                                                        .addGroup(
-                                                                CrearCampoLayout
-                                                                        .createSequentialGroup()
-                                                                        .addGap(22, 22, 22)
-                                                                        .addComponent(LlaveCC))
-                                                        .addGroup(
-                                                                CrearCampoLayout
-                                                                        .createSequentialGroup()
-                                                                        .addPreferredGap(
-                                                                                javax.swing
-                                                                                        .LayoutStyle
-                                                                                        .ComponentPlacement
-                                                                                        .RELATED)
-                                                                        .addComponent(
-                                                                                TamanoCC,
-                                                                                javax.swing
-                                                                                        .GroupLayout
-                                                                                        .PREFERRED_SIZE,
-                                                                                javax.swing
-                                                                                        .GroupLayout
-                                                                                        .DEFAULT_SIZE,
-                                                                                javax.swing
-                                                                                        .GroupLayout
-                                                                                        .PREFERRED_SIZE)))
-                                        .addPreferredGap(
-                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                                                67,
-                                                Short.MAX_VALUE)
-                                        .addComponent(
-                                                jButton1,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                48,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(65, 65, 65)));
-
-        Campos.add(
-                CrearCampo, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 60, 620, 470));
 
         BorrarCampo.setBackground(new java.awt.Color(0, 153, 153));
 
@@ -990,11 +1005,10 @@ public class VentanaPrincipal extends JFrame {
         if (!NombreCC.getText().equalsIgnoreCase("")) {
             if ((int) TamanoCC.getValue() >= 0) {
                 String nombre = NombreCC.getText();
-                TipoCampo tipo =
-                        TipoCampo.valueOf(TipoCC.getItemAt(TipoCC.getSelectedIndex()).toString());
+                TipoCampo tipo = TipoCampo.valueOf(TipoCC.getSelectedItem().toString());
                 int tamano = (int) TamanoCC.getValue();
                 boolean obligatorio = ObligatorioCC.isSelected();
-                // Falta un dato que no entiendo, pero Jacob sabe
+                String valorPredeterminado = valorPredeterminadoCC.getText();
                 if (LlaveCC.isSelected()) {
                     Campo campo =
                             metadata.agregarCampo(
@@ -1002,10 +1016,10 @@ public class VentanaPrincipal extends JFrame {
                                     tipo,
                                     tamano,
                                     obligatorio,
-                                    nombre /*este parte*/); // Jacob sabe como se hace
+                                    valorPredeterminado); // Jacob sabe como se hace
                     metadata.establecerLlavePrimaria(campo.obtenerId());
                 } else {
-                    metadata.agregarCampo(nombre, tipo, tamano, obligatorio, nombre /*este parte*/);
+                    metadata.agregarCampo(nombre, tipo, tamano, obligatorio, valorPredeterminado);
                 }
             }
         }
@@ -1121,6 +1135,7 @@ public class VentanaPrincipal extends JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -1132,5 +1147,6 @@ public class VentanaPrincipal extends JFrame {
     private javax.swing.JPopupMenu.Separator sepMenuArchivos;
     private javax.swing.JLabel tituloLabel;
     private javax.swing.JLabel tituloLabel1;
+    private javax.swing.JTextField valorPredeterminadoCC;
     // End of variables declaration//GEN-END:variables
 }
