@@ -1,6 +1,8 @@
 package com.minidbms.modelo;
 
 import com.minidbms.excepciones.ArchivoInvalidoException;
+import com.minidbms.excepciones.CampoDuplicadoException;
+import com.minidbms.excepciones.CampoInexistenteException;
 import com.minidbms.utilidades.ValidadorTexto;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -29,7 +31,7 @@ public class Metadata {
     public Metadata(String nombreArchivo, int siguienteCampoId) {
         if (nombreArchivo == null) {
             throw new IllegalArgumentException("El nombre del archivo es nulo");
-        } else if (nombreArchivo.trim().isEmpty()) {
+        } else if (nombreArchivo.trim().isEmpty() || nombreArchivo.trim().isBlank()) {
             throw new IllegalArgumentException("El nombre del archivo está vacío");
         }
         ValidadorTexto.validarCaracteresProhibidos(nombreArchivo);
@@ -56,7 +58,7 @@ public class Metadata {
             boolean obligatorio,
             String valorPredeterminado) {
         if (!esNombreUnico(nombre)) {
-            throw new IllegalStateException("El campo ya existe");
+            throw new CampoDuplicadoException("nombre", nombre);
         }
 
         Campo campoNuevo =
@@ -75,21 +77,19 @@ public class Metadata {
         return campoNuevo;
     }
 
-    public Campo agregarCampo(Campo campo) {
+    public void agregarCampo(Campo campo) {
         if (campo == null) {
-            throw new IllegalArgumentException("El campo a agregar no debe ser nulo");
+            throw new CampoInexistenteException("El campo no debe ser nulo.");
         }
         if (buscarCampoPorId(campo.obtenerId()) != null) {
-            throw new IllegalStateException("Ya existe un campo con el ID: " + campo.obtenerId());
+            throw new CampoDuplicadoException("ID", String.valueOf(campo.obtenerId()));
         }
         if (!esNombreUnico(campo.obtenerNombre())) {
-            throw new IllegalStateException(
-                    "El campo con el nombre " + campo.obtenerNombre() + " ya existe");
+            throw new CampoDuplicadoException("nombre", campo.obtenerNombre());
         }
         campos.add(campo);
         siguienteCampoId =
                 siguienteCampoId < campo.obtenerId() + 1 ? campo.obtenerId() + 1 : siguienteCampoId;
-        return campo;
     }
 
     public Campo buscarCampoPorId(int id) {
@@ -110,17 +110,16 @@ public class Metadata {
 
     public void renombrarCampo(int id, String nuevoNombre) {
         if (nuevoNombre == null || nuevoNombre.isBlank()) {
-            throw new IllegalArgumentException("El nuevo nombre no debe estar vacío");
+            throw new IllegalArgumentException("El nuevo nombre esta vacío.");
         }
         Campo campo = buscarCampoPorId(id);
         if (campo == null) {
-            throw new IllegalStateException("El campo a renombrar no se encuentra");
+            throw new CampoInexistenteException(id, "No se puede renombrar.");
         }
 
         nuevoNombre = nuevoNombre.trim();
         if (!esNombreUnico(nuevoNombre)) {
-            throw new IllegalStateException(
-                    "El campo ya existe con ese mismo nombre: " + nuevoNombre);
+            throw new CampoDuplicadoException("nombre", nuevoNombre);
         }
         campo.renombrar(nuevoNombre.trim());
     }
@@ -128,7 +127,7 @@ public class Metadata {
     public void reducirLongitudCampo(int id, int longitudMaxima) {
         Campo campo = buscarCampoPorId(id);
         if (campo == null) {
-            throw new IllegalStateException("El campo a reducir la longitud es inexistente");
+            throw new CampoInexistenteException(id, "No se puede reducir la longitud.");
         }
         campo.reducirLongitudMaxima(longitudMaxima);
     }
@@ -136,7 +135,7 @@ public class Metadata {
     public void cambiarTipoCampo(int id, TipoCampo nuevoTipo, int nuevaLongitud) {
         Campo campo = buscarCampoPorId(id);
         if (campo == null) {
-            throw new IllegalStateException("El campo a modificar es inexistente");
+            throw new CampoInexistenteException(id, "No se puede cambiar el tipo de campo.");
         }
         campo.cambiarTipo(nuevoTipo, nuevaLongitud);
     }
@@ -144,11 +143,11 @@ public class Metadata {
     public void borrarCampo(int id) {
         Campo campo = buscarCampoPorId(id);
         if (campo == null) {
-            throw new IllegalStateException("El campo a eliminar es inexistente");
+            throw new CampoInexistenteException(id, "No se puede borrar");
         }
         if (esLlavePrimaria(id)) {
             throw new IllegalStateException(
-                    "El campo no se puede eliminar porque es llave primaria");
+                    "El campo no se puede eliminar porque es llave primaria.");
         }
         campos.remove(campo);
     }
@@ -156,8 +155,7 @@ public class Metadata {
     public void establecerLlavePrimaria(int id) {
         Campo campo = buscarCampoPorId(id);
         if (campo == null) {
-            throw new IllegalStateException(
-                    "El campo a establecer como llave primaria es inexistente");
+            throw new CampoInexistenteException(id, "No se puede establecer como llave primaria.");
         }
         if (!campo.esObligatorio()) {
             throw new IllegalStateException(
@@ -265,8 +263,8 @@ public class Metadata {
                         } else if (clave.equalsIgnoreCase("Version")) {
                             versionFormato = Integer.parseInt(valor);
                             if (versionFormato > VERSION_FORMATO || versionFormato < 1) {
-                                throw new IllegalStateException(
-                                        "La version del formato es invalida");
+                                throw new ArchivoInvalidoException(
+                                        "La versión del formato del archivo es inválida");
                             }
                         } else if (clave.equalsIgnoreCase("CampoSiguienteId")) {
                             siguienteCampoId = Integer.parseInt(valor);

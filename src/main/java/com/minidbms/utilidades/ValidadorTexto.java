@@ -2,7 +2,7 @@ package com.minidbms.utilidades;
 
 public class ValidadorTexto {
 
-    private static final String CHARS_PROHIBIDOS = "<>?[]{},.|=\n";
+    private static final String CHARS_PROHIBIDOS = "<>?[]|=\n";
 
     private ValidadorTexto() {}
 
