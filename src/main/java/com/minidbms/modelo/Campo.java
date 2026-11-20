@@ -113,7 +113,7 @@ public class Campo {
 
     public void reducirLongitudMaxima(int nuevaLongitudMaxima) {
         if (tipo != TipoCampo.TEXTO) {
-            throw new IllegalStateException("Solo los campos de texto tiene longitud máxima");
+            throw new IllegalStateException("Solo los campos de texto tienen longitud máxima");
         }
         if (nuevaLongitudMaxima <= 0) {
             throw new IllegalArgumentException("La longitud que ingresó es menor o igual a cero");

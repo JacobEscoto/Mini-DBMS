@@ -110,7 +110,7 @@ public class Metadata {
 
     public void renombrarCampo(int id, String nuevoNombre) {
         if (nuevoNombre == null || nuevoNombre.isBlank()) {
-            throw new IllegalArgumentException("El nuevo nombre no debe estár vacío");
+            throw new IllegalArgumentException("El nuevo nombre no debe estar vacío");
         }
         Campo campo = buscarCampoPorId(id);
         if (campo == null) {
@@ -172,7 +172,7 @@ public class Metadata {
     public void establecerFormatoArchivo(int nuevaVersionFormato) {
         if (nuevaVersionFormato <= 0) {
             throw new IllegalArgumentException(
-                    "La versión del formato del archivo no debe ser negativo");
+                    "La versión del formato del archivo debe ser mayor que cero");
         }
         this.versionFormato = nuevaVersionFormato;
     }
@@ -286,10 +286,18 @@ public class Metadata {
 
                         if (tipo == TipoCampo.TEXTO) {
                             if (informacion.length < CANTIDAD_MIN_CAMPO_NON_TEXTO) {
-                                throw new IllegalStateException("hola, texto no cumple");
+                                throw new IllegalStateException(
+                                        "El campo de texto no tiene la cantidad de datos esperado");
                             }
                             tamanio = Integer.parseInt(informacion[3].trim());
-                            obligatorio = Boolean.parseBoolean(informacion[4].trim());
+                            String valorBoolean = informacion[4].trim();
+                            if (valorBoolean.equalsIgnoreCase("true")
+                                    || valorBoolean.equalsIgnoreCase("false")) {
+                                obligatorio = Boolean.parseBoolean(valorBoolean);
+                            } else {
+                                throw new IllegalStateException(
+                                        "Valor boolean incorrecto: " + valorBoolean);
+                            }
                             valorPredeterminado =
                                     informacion.length > CANTIDAD_MIN_CAMPO_TEXTO
                                             ? informacion[5].trim()
@@ -346,6 +354,7 @@ public class Metadata {
         if (llavePrimariaId != -1) {
             throw new IllegalStateException("Se debe definir una llave primaria antes de guardar");
         }
+
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
             bw.write(FIRMA_FORMATO + "\n");
             bw.write("[ARCHIVO]\n");
