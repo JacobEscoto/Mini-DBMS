@@ -1,6 +1,7 @@
 package com.minidbms.modelo;
 
 import com.minidbms.excepciones.ArchivoInvalidoException;
+import com.minidbms.utilidades.ValidadorTexto;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,6 +32,7 @@ public class Metadata {
         } else if (nombreArchivo.trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre del archivo está vacío");
         }
+        ValidadorTexto.validarCaracteresProhibidos(nombreArchivo);
         if (siguienteCampoId <= 0) {
             throw new IllegalArgumentException("El id del siguiente campo debe ser mayor que cero");
         }
@@ -131,12 +133,12 @@ public class Metadata {
         campo.reducirLongitudMaxima(longitudMaxima);
     }
 
-    public void cambiarTipoCampo(int id, TipoCampo nuevoTipo) {
+    public void cambiarTipoCampo(int id, TipoCampo nuevoTipo, int nuevaLongitud) {
         Campo campo = buscarCampoPorId(id);
         if (campo == null) {
             throw new IllegalStateException("El campo a modificar es inexistente");
         }
-        campo.cambiarTipo(nuevoTipo);
+        campo.cambiarTipo(nuevoTipo, nuevaLongitud);
     }
 
     public void borrarCampo(int id) {
@@ -222,7 +224,7 @@ public class Metadata {
         String linea, seccion = "";
 
         String nombreArchivo = "";
-        int versionFormato;
+        int versionFormato = VERSION_FORMATO;
         int siguienteCampoId = 1;
         int llavePrimariaId = -1;
         Metadata metadata;
@@ -274,9 +276,6 @@ public class Metadata {
                         String[] informacion =
                                 obtenerInformacion(linea, "\\|", CANTIDAD_MIN_CAMPO_NON_TEXTO);
 
-                        for (String info : informacion) {
-                            System.out.println(info);
-                        }
                         int id = Integer.parseInt(informacion[0].trim());
                         String nombre = informacion[1].trim();
                         TipoCampo tipo = TipoCampo.valueOf(informacion[2].trim());
@@ -333,17 +332,20 @@ public class Metadata {
             if (llavePrimariaId != -1) {
                 metadata.establecerLlavePrimaria(llavePrimariaId);
             }
+            metadata.establecerFormatoArchivo(versionFormato);
         } catch (IOException
                 | IllegalStateException
                 | IllegalArgumentException
                 | ArrayIndexOutOfBoundsException ex) {
-            ex.printStackTrace();
-            return null;
+            throw new ArchivoInvalidoException("Error al leer el archivo: " + ex.getMessage());
         }
         return metadata;
     }
 
     public void guardar(File file) throws IOException {
+        if (llavePrimariaId != -1) {
+            throw new IllegalStateException("Se debe definir una llave primaria antes de guardar");
+        }
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
             bw.write(FIRMA_FORMATO + "\n");
             bw.write("[ARCHIVO]\n");

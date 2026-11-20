@@ -29,7 +29,7 @@ public class VentanaPrincipal extends JFrame {
         initComponents();
         setLocationRelativeTo(null);
 
-        // acciones de la aplicación
+        // acciones del menú de la aplicación
         salirMItem.addActionListener(e -> acciones.salir());
 
         DBMS.setVisible(false);
@@ -925,7 +925,7 @@ public class VentanaPrincipal extends JFrame {
 
         guardarArchivoMItem1.setAccelerator(
                 javax.swing.KeyStroke.getKeyStroke(
-                        java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+                        java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         guardarArchivoMItem1.setText("Guardar Archivo");
         menuArchivo.add(guardarArchivoMItem1);
 
@@ -1114,11 +1114,6 @@ public class VentanaPrincipal extends JFrame {
         Modificar_ListarCampo.setVisible(false);
         BorrarCampo.setVisible(true);
     } // GEN-LAST:event_Borrarcampo_ButtonMouseClicked
-
-    private void salirMItemActionPerformed(
-            java.awt.event.ActionEvent evt) { // GEN-FIRST:event_salirMItemActionPerformed
-        acciones.salir();
-    } // GEN-LAST:event_salirMItemActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Agregarcampo_jButton;

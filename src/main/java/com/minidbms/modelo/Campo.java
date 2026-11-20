@@ -1,5 +1,6 @@
 package com.minidbms.modelo;
 
+import com.minidbms.utilidades.ValidadorTexto;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
@@ -90,15 +91,24 @@ public class Campo {
         this.nombre = nuevoNombre.trim();
     }
 
-    public void cambiarTipo(TipoCampo nuevoTipo) {
+    public void cambiarTipo(TipoCampo nuevoTipo, int nuevaLongitud) {
         if (nuevoTipo == null) {
             throw new IllegalArgumentException("El tipo de campo no debe ser nulo");
         }
-        if (!esValorCompatible(valorPredeterminado, nuevoTipo, longitudMaxima)) {
-            throw new IllegalArgumentException(
-                    "El valor predeterminado no es compatible con el tipo " + nuevoTipo);
+        if (nuevoTipo == TipoCampo.TEXTO && nuevaLongitud <= 0) {
+            throw new IllegalArgumentException("La longitud debe ser mayor que cero");
         }
+        int longitudNueva = nuevoTipo == TipoCampo.TEXTO ? nuevaLongitud : 0;
+        validarLongitud(nuevoTipo, longitudNueva);
+
+        if (!esValorCompatible(valorPredeterminado, nuevoTipo, longitudNueva)) {
+            throw new IllegalArgumentException(
+                    "El valor predeterminado no es compatible con el tipo: " + nuevoTipo);
+        }
+        ValidadorTexto.validarCaracteresProhibidos(valorPredeterminado);
+
         this.tipo = nuevoTipo;
+        this.longitudMaxima = longitudNueva;
     }
 
     public void reducirLongitudMaxima(int nuevaLongitudMaxima) {
@@ -160,6 +170,8 @@ public class Campo {
         if (nombre == null || nombre.isBlank()) {
             throw new IllegalArgumentException("El nombre del campo no debe estar vacío");
         }
+
+        ValidadorTexto.validarCaracteresProhibidos(nombre);
     }
 
     private void validarLongitud(TipoCampo tipo, int longitud) {
