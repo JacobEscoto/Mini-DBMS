@@ -73,11 +73,21 @@ public class Metadata {
         return campoNuevo;
     }
 
-    public void agregarCampo(Campo campo) {
+    public Campo agregarCampo(Campo campo) {
         if (campo == null) {
             throw new IllegalArgumentException("El campo a agregar no debe ser nulo");
         }
+        if (buscarCampoPorId(campo.obtenerId()) != null) {
+            throw new IllegalStateException("Ya existe un campo con el ID: " + campo.obtenerId());
+        }
+        if (!esNombreUnico(campo.obtenerNombre())) {
+            throw new IllegalStateException(
+                    "El campo con el nombre " + campo.obtenerNombre() + " ya existe");
+        }
         campos.add(campo);
+        siguienteCampoId =
+                siguienteCampoId < campo.obtenerId() + 1 ? campo.obtenerId() + 1 : siguienteCampoId;
+        return campo;
     }
 
     public Campo buscarCampoPorId(int id) {
@@ -85,19 +95,30 @@ public class Metadata {
     }
 
     public Campo buscarCampoPorNombre(String nombre) {
-        if (nombre == null) {
+        if (nombre == null || nombre.isBlank()) {
             return null;
         }
+
+        String nombreTrimmed = nombre.trim();
         return campos.stream()
-                .filter(campo -> campo.obtenerNombre().equalsIgnoreCase(nombre))
+                .filter(campo -> campo.obtenerNombre().equalsIgnoreCase(nombreTrimmed))
                 .findFirst()
                 .orElse(null);
     }
 
     public void renombrarCampo(int id, String nuevoNombre) {
+        if (nuevoNombre == null || nuevoNombre.isBlank()) {
+            throw new IllegalArgumentException("El nuevo nombre no debe estár vacío");
+        }
         Campo campo = buscarCampoPorId(id);
         if (campo == null) {
             throw new IllegalStateException("El campo a renombrar no se encuentra");
+        }
+
+        nuevoNombre = nuevoNombre.trim();
+        if (!esNombreUnico(nuevoNombre)) {
+            throw new IllegalStateException(
+                    "El campo ya existe con ese mismo nombre: " + nuevoNombre);
         }
         campo.renombrar(nuevoNombre.trim());
     }
@@ -140,12 +161,16 @@ public class Metadata {
             throw new IllegalStateException(
                     "El campo debe ser obligatorio para establecerse como llave primaria");
         }
+        if (llavePrimariaId != -1 && llavePrimariaId != id) {
+            throw new IllegalStateException("Ya existe una llave primaria definida");
+        }
         llavePrimariaId = id;
     }
 
     public void establecerFormatoArchivo(int nuevaVersionFormato) {
         if (nuevaVersionFormato <= 0) {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException(
+                    "La versión del formato del archivo no debe ser negativo");
         }
         this.versionFormato = nuevaVersionFormato;
     }
@@ -192,12 +217,12 @@ public class Metadata {
 
     public static Metadata leer(BufferedReader br) throws ArchivoInvalidoException {
         if (br == null) {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("El buffer de lectura es nulo");
         }
         String linea, seccion = "";
 
         String nombreArchivo = "";
-        int versionFormato = VERSION_FORMATO;
+        int versionFormato;
         int siguienteCampoId = 1;
         int llavePrimariaId = -1;
         Metadata metadata;
@@ -237,6 +262,10 @@ public class Metadata {
                             nombreArchivo = valor.trim();
                         } else if (clave.equalsIgnoreCase("Version")) {
                             versionFormato = Integer.parseInt(valor);
+                            if (versionFormato > VERSION_FORMATO || versionFormato < 1) {
+                                throw new IllegalStateException(
+                                        "La version del formato es invalida");
+                            }
                         } else if (clave.equalsIgnoreCase("CampoSiguienteId")) {
                             siguienteCampoId = Integer.parseInt(valor);
                         }
@@ -245,42 +274,46 @@ public class Metadata {
                         String[] informacion =
                                 obtenerInformacion(linea, "\\|", CANTIDAD_MIN_CAMPO_NON_TEXTO);
 
-                        String nombre = informacion[0].trim();
-                        TipoCampo tipo = TipoCampo.valueOf(informacion[1].trim());
+                        for (String info : informacion) {
+                            System.out.println(info);
+                        }
+                        int id = Integer.parseInt(informacion[0].trim());
+                        String nombre = informacion[1].trim();
+                        TipoCampo tipo = TipoCampo.valueOf(informacion[2].trim());
+
                         int tamanio = 0;
-                        boolean obligatorio = false;
-                        String valorPredeterminado = "";
+                        boolean obligatorio;
+                        String valorPredeterminado;
 
                         if (tipo == TipoCampo.TEXTO) {
-                            tamanio = Integer.parseInt(informacion[2].trim());
-                            obligatorio = Boolean.parseBoolean(informacion[3].trim());
+                            if (informacion.length < CANTIDAD_MIN_CAMPO_NON_TEXTO) {
+                                throw new IllegalStateException("hola, texto no cumple");
+                            }
+                            tamanio = Integer.parseInt(informacion[3].trim());
+                            obligatorio = Boolean.parseBoolean(informacion[4].trim());
                             valorPredeterminado =
                                     informacion.length > CANTIDAD_MIN_CAMPO_TEXTO
-                                            ? informacion[4].trim()
+                                            ? informacion[5].trim()
                                             : "";
                         } else {
-                            obligatorio = Boolean.parseBoolean(informacion[2].trim());
+                            obligatorio = Boolean.parseBoolean(informacion[3].trim());
                             valorPredeterminado =
                                     informacion.length > CANTIDAD_MIN_CAMPO_NON_TEXTO
-                                            ? informacion[3].trim()
+                                            ? informacion[4].trim()
                                             : "";
                         }
 
                         Campo campo =
                                 tipo == TipoCampo.TEXTO
                                         ? new Campo(
-                                                siguienteCampoId,
+                                                id,
                                                 nombre,
                                                 tipo,
                                                 tamanio,
                                                 obligatorio,
                                                 valorPredeterminado)
                                         : new Campo(
-                                                siguienteCampoId,
-                                                nombre,
-                                                tipo,
-                                                obligatorio,
-                                                valorPredeterminado);
+                                                id, nombre, tipo, obligatorio, valorPredeterminado);
                         campos.add(campo);
                     }
                     case "LLAVE_PRIMARIA" -> {
@@ -293,29 +326,33 @@ public class Metadata {
                     }
                 }
             }
+            metadata = new Metadata(nombreArchivo, siguienteCampoId);
+            for (Campo campo : campos) {
+                metadata.agregarCampo(campo);
+            }
+            if (llavePrimariaId != -1) {
+                metadata.establecerLlavePrimaria(llavePrimariaId);
+            }
         } catch (IOException
                 | IllegalStateException
                 | IllegalArgumentException
                 | ArrayIndexOutOfBoundsException ex) {
+            ex.printStackTrace();
             return null;
-        }
-        metadata = new Metadata(nombreArchivo, siguienteCampoId);
-        campos.stream().forEach(campo -> metadata.agregarCampo(campo));
-        if (llavePrimariaId != -1) {
-            try {
-                metadata.establecerLlavePrimaria(llavePrimariaId);
-            } catch (IllegalStateException ex) {
-                return null;
-            }
         }
         return metadata;
     }
 
     public void guardar(File file) throws IOException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-            bw.write(FIRMA_FORMATO);
+            bw.write(FIRMA_FORMATO + "\n");
             bw.write("[ARCHIVO]\n");
-            bw.write("Nombre=" + nombreArchivo.substring(0, nombreArchivo.length() - 4) + "\n");
+            bw.write(
+                    "Nombre="
+                            + (nombreArchivo.contains(".txt")
+                                    ? nombreArchivo.substring(0, nombreArchivo.indexOf(".txt"))
+                                    : nombreArchivo)
+                            + "\n");
             bw.write("Version=" + versionFormato + "\n");
             bw.write("CampoSiguienteId=" + siguienteCampoId + "\n");
             bw.write("[LLAVE_PRIMARIA]\n");
@@ -323,6 +360,7 @@ public class Metadata {
             bw.write("[CAMPOS]\n");
             for (Campo campo : campos) {
                 bw.write(campo.toString());
+                bw.newLine();
             }
         }
     }
@@ -341,8 +379,8 @@ public class Metadata {
 
     // Valores predeterminados
     private static final int CANTIDAD_INFO_ARCHIVO = 2;
-    private static final int CANTIDAD_MIN_CAMPO_TEXTO = 4;
-    private static final int CANTIDAD_MIN_CAMPO_NON_TEXTO = 3;
+    private static final int CANTIDAD_MIN_CAMPO_TEXTO = 5;
+    private static final int CANTIDAD_MIN_CAMPO_NON_TEXTO = 4;
 
     // Firma única del formato propio de archivo
     public static final String FIRMA_FORMATO = "DBMS-AFJ";

@@ -18,24 +18,7 @@ public class Campo {
             TipoCampo tipo,
             boolean obligatorio,
             String valorPredeterminado) {
-        if (id <= 0) {
-            throw new IllegalArgumentException("El ID debe ser mayor que cero");
-        }
-        if (tipo == null) {
-            throw new IllegalArgumentException("El tipo de campo no debe ser nulo");
-        }
-
-        validarNombre(nombre);
-
-        if (!esValorCompatible(valorPredeterminado, tipo, longitudMaxima)) {
-            throw new IllegalArgumentException("El valor debe ser compatible con su tipo de campo");
-        }
-
-        this.id = id;
-        this.tipo = tipo;
-        this.nombre = nombre.trim();
-        this.obligatorio = obligatorio;
-        this.valorPredeterminado = valorPredeterminado;
+        this(id, nombre, tipo, 0, obligatorio, valorPredeterminado);
     }
 
     public Campo(
@@ -54,10 +37,20 @@ public class Campo {
         }
 
         validarNombre(nombre);
-        validarLongitud(tipo, longitudMaxima);
+        int longitudCoincide = (tipo == TipoCampo.TEXTO) ? longitudMaxima : 0;
+        validarLongitud(tipo, longitudCoincide);
 
-        if (!esValorCompatible(valorPredeterminado, tipo, longitudMaxima)) {
-            throw new IllegalArgumentException("El valor debe ser compatible con su tipo de campo");
+        if (!esValorCompatible(valorPredeterminado, tipo, longitudCoincide)) {
+            throw new IllegalArgumentException(
+                    "Valor incompatible -> campo: "
+                            + nombre
+                            + ", tipo: "
+                            + tipo
+                            + ", valorPredeterminado: '"
+                            + valorPredeterminado
+                            + "'"
+                            + ", longitudCoincide: "
+                            + longitudCoincide);
         }
 
         this.id = id;
@@ -130,6 +123,10 @@ public class Campo {
             return true;
         }
 
+        if ((tipo == TipoCampo.ENTERO || tipo == TipoCampo.DECIMAL) && longitud != 0) {
+            return false;
+        }
+
         try {
             switch (tipo) {
                 case ENTERO -> {
@@ -174,13 +171,14 @@ public class Campo {
     @Override
     public String toString() {
         return id
-                + " | "
+                + "|"
                 + nombre
-                + " | "
+                + "|"
                 + tipo
-                + " | "
-                + (tipo == TipoCampo.TEXTO ? longitudMaxima + " | " : "")
+                + "|"
+                + (tipo == TipoCampo.TEXTO ? longitudMaxima + "|" : "")
                 + (obligatorio ? "true" : "false")
+                + "|"
                 + valorPredeterminado;
     }
 }

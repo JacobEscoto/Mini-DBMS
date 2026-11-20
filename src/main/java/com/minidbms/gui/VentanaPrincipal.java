@@ -4,14 +4,14 @@ import com.minidbms.gui.acciones.AccionesApp;
 import com.minidbms.modelo.Campo;
 import com.minidbms.modelo.Metadata;
 import com.minidbms.modelo.TipoCampo;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -33,7 +33,7 @@ public class VentanaPrincipal extends JFrame {
         salirMItem.addActionListener(e -> acciones.salir());
 
         DBMS.setVisible(false);
-        Portada.setVisible(true);
+        portadaPanel.setVisible(true);
         CrearCampo.setVisible(true);
         Modificar_ListarCampo.setVisible(false);
         BorrarCampo.setVisible(false);
@@ -45,6 +45,22 @@ public class VentanaPrincipal extends JFrame {
         modelo.setRowCount(0);
         modelo.setColumnIdentifiers(
                 new String[] {"Nombre", "Tipo", "Longitud", "Obligatorio", "Valor por defecto"});
+
+        // Esconder campo longitud por defecto
+        String seleccionado = TipoCC.getSelectedItem().toString();
+        try {
+            TipoCampo tipoSeleccionado = TipoCampo.valueOf(seleccionado);
+            boolean esTipoTexto = tipoSeleccionado == TipoCampo.TEXTO;
+
+            tamanoCampoLbl.setVisible(esTipoTexto);
+            TamanoCC.setVisible(esTipoTexto);
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showConfirmDialog(
+                    null,
+                    "El tipo de campo es incorrecto",
+                    "Campo No Válido",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
@@ -56,12 +72,16 @@ public class VentanaPrincipal extends JFrame {
     private void initComponents() {
 
         panelPadre = new javax.swing.JPanel();
-        Portada = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        tituloLabel = new javax.swing.JLabel();
-        Comenzar = new javax.swing.JButton();
-        tituloLabel1 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        portadaPanel = new javax.swing.JPanel();
+        portadaIconPanel = new javax.swing.JPanel();
+        portadaIconLabel = new javax.swing.JLabel();
+        portadaCtaPanel = new javax.swing.JPanel();
+        textoBienvenidaPanel = new javax.swing.JPanel();
+        textoBienvenidaLbl = new javax.swing.JLabel();
+        textoBienvenidaLbl1 = new javax.swing.JLabel();
+        ctaPanel = new javax.swing.JPanel();
+        nuevoArchivoPortadaBtn = new javax.swing.JButton();
+        abrirArchivoPortadaBtn = new javax.swing.JButton();
         DBMS = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         Campos = new javax.swing.JPanel();
@@ -72,12 +92,12 @@ public class VentanaPrincipal extends JFrame {
         CrearCampo = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        tamanoCampoLbl = new javax.swing.JLabel();
         TamanoCC = new javax.swing.JSpinner();
         TipoCC = new javax.swing.JComboBox<>();
         NombreCC = new javax.swing.JTextField();
         LlaveCC = new javax.swing.JCheckBox();
-        jButton1 = new javax.swing.JButton();
+        crearCampoBtn = new javax.swing.JButton();
         ObligatorioCC = new javax.swing.JCheckBox();
         jLabel9 = new javax.swing.JLabel();
         valorPredeterminadoCC = new javax.swing.JTextField();
@@ -116,99 +136,79 @@ public class VentanaPrincipal extends JFrame {
 
         panelPadre.setLayout(new java.awt.CardLayout());
 
-        Portada.setBackground(new java.awt.Color(0, 153, 153));
-        Portada.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        portadaPanel.setBackground(new java.awt.Color(0, 153, 153));
+        portadaPanel.setLayout(new java.awt.BorderLayout());
 
-        jPanel3.setBackground(new java.awt.Color(0, 51, 51));
+        portadaIconPanel.setBackground(Color.decode("#181825"));
+        portadaIconPanel.setPreferredSize(new java.awt.Dimension(545, 720));
+        portadaIconPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        tituloLabel.setFont(new java.awt.Font("SansSerif", 1, 55)); // NOI18N
-        tituloLabel.setForeground(new java.awt.Color(255, 255, 255));
-        tituloLabel.setText("¡Bienvenido");
+        portadaIconLabel.setIcon(
+                new ImageIcon(getClass().getResource("/com/minidbms/gui/DBMS.png")));
+        portadaIconLabel.setMaximumSize(new java.awt.Dimension(427, 359));
+        portadaIconPanel.add(
+                portadaIconLabel,
+                new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 150, 427, 359));
 
-        Comenzar.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        Comenzar.setText("Comenzar");
-        Comenzar.addMouseListener(
-                new java.awt.event.MouseAdapter() {
-                    public void mouseClicked(java.awt.event.MouseEvent evt) {
-                        ComenzarMouseClicked(evt);
-                    }
-                });
+        portadaPanel.add(portadaIconPanel, java.awt.BorderLayout.LINE_START);
 
-        tituloLabel1.setFont(new java.awt.Font("SansSerif", 1, 55)); // NOI18N
-        tituloLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        tituloLabel1.setText("a Mini DBMS!");
+        portadaCtaPanel.setBackground(Color.decode("#11111b"));
+        portadaCtaPanel.setLayout(new java.awt.BorderLayout());
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-                jPanel3Layout
-                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(
-                                jPanel3Layout
-                                        .createSequentialGroup()
-                                        .addContainerGap(100, Short.MAX_VALUE)
-                                        .addGroup(
-                                                jPanel3Layout
-                                                        .createParallelGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .LEADING)
-                                                        .addGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .TRAILING,
-                                                                jPanel3Layout
-                                                                        .createSequentialGroup()
-                                                                        .addComponent(tituloLabel1)
-                                                                        .addGap(80, 80, 80))
-                                                        .addGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .TRAILING,
-                                                                jPanel3Layout
-                                                                        .createSequentialGroup()
-                                                                        .addComponent(tituloLabel)
-                                                                        .addGap(100, 100, 100))
-                                                        .addGroup(
-                                                                javax.swing.GroupLayout.Alignment
-                                                                        .TRAILING,
-                                                                jPanel3Layout
-                                                                        .createSequentialGroup()
-                                                                        .addComponent(
-                                                                                Comenzar,
-                                                                                javax.swing
-                                                                                        .GroupLayout
-                                                                                        .PREFERRED_SIZE,
-                                                                                161,
-                                                                                javax.swing
-                                                                                        .GroupLayout
-                                                                                        .PREFERRED_SIZE)
-                                                                        .addGap(174, 174, 174)))));
-        jPanel3Layout.setVerticalGroup(
-                jPanel3Layout
-                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(
-                                javax.swing.GroupLayout.Alignment.TRAILING,
-                                jPanel3Layout
-                                        .createSequentialGroup()
-                                        .addContainerGap(115, Short.MAX_VALUE)
-                                        .addComponent(tituloLabel)
-                                        .addPreferredGap(
-                                                javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(tituloLabel1)
-                                        .addGap(116, 116, 116)
-                                        .addComponent(
-                                                Comenzar,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                51,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(212, 212, 212)));
+        textoBienvenidaPanel.setOpaque(false);
+        textoBienvenidaPanel.setPreferredSize(new java.awt.Dimension(555, 300));
+        textoBienvenidaPanel.setLayout(new java.awt.GridLayout(2, 1));
 
-        Portada.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 0, 530, 640));
+        textoBienvenidaLbl.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
+        textoBienvenidaLbl.setForeground(new java.awt.Color(255, 255, 255));
+        textoBienvenidaLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        textoBienvenidaLbl.setText("¡Bienvenido a");
+        textoBienvenidaLbl.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        textoBienvenidaPanel.add(textoBienvenidaLbl);
 
-        jLabel1.setIcon(
-                new javax.swing.ImageIcon(
-                        getClass().getResource("/com/minidbms/gui/DBMS.png"))); // NOI18N
-        Portada.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 180, -1, -1));
+        textoBienvenidaLbl1.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
+        textoBienvenidaLbl1.setForeground(new java.awt.Color(255, 255, 255));
+        textoBienvenidaLbl1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        textoBienvenidaLbl1.setText("Mini DBMS!");
+        textoBienvenidaLbl1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        textoBienvenidaPanel.add(textoBienvenidaLbl1);
 
-        panelPadre.add(Portada, "card2");
+        portadaCtaPanel.add(textoBienvenidaPanel, java.awt.BorderLayout.PAGE_START);
+
+        ctaPanel.setOpaque(false);
+        java.awt.GridBagLayout ctaPanelLayout = new java.awt.GridBagLayout();
+        ctaPanelLayout.columnWidths = new int[] {270};
+        ctaPanel.setLayout(ctaPanelLayout);
+
+        nuevoArchivoPortadaBtn.setBackground(Color.decode("#1e66f5"));
+        nuevoArchivoPortadaBtn.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        nuevoArchivoPortadaBtn.setForeground(new java.awt.Color(255, 255, 255));
+        nuevoArchivoPortadaBtn.setText("Nuevo Archivo");
+        nuevoArchivoPortadaBtn.setBorder(
+                javax.swing.BorderFactory.createCompoundBorder(
+                        javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1),
+                        javax.swing.BorderFactory.createEmptyBorder(4, 10, 4, 10)));
+        nuevoArchivoPortadaBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        nuevoArchivoPortadaBtn.setPreferredSize(new java.awt.Dimension(240, 30));
+        ctaPanel.add(nuevoArchivoPortadaBtn, new java.awt.GridBagConstraints());
+
+        abrirArchivoPortadaBtn.setBackground(Color.decode("#1e66f5"));
+        abrirArchivoPortadaBtn.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        abrirArchivoPortadaBtn.setForeground(new java.awt.Color(255, 255, 255));
+        abrirArchivoPortadaBtn.setText("Abrir Archivo");
+        abrirArchivoPortadaBtn.setBorder(
+                javax.swing.BorderFactory.createCompoundBorder(
+                        javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1),
+                        javax.swing.BorderFactory.createEmptyBorder(4, 10, 4, 10)));
+        abrirArchivoPortadaBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        abrirArchivoPortadaBtn.setPreferredSize(new java.awt.Dimension(240, 30));
+        ctaPanel.add(abrirArchivoPortadaBtn, new java.awt.GridBagConstraints());
+
+        portadaCtaPanel.add(ctaPanel, java.awt.BorderLayout.CENTER);
+
+        portadaPanel.add(portadaCtaPanel, java.awt.BorderLayout.CENTER);
+
+        panelPadre.add(portadaPanel, "card2");
 
         DBMS.setBackground(new java.awt.Color(51, 255, 204));
         DBMS.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -256,24 +256,25 @@ public class VentanaPrincipal extends JFrame {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel4.setText("Valor Predeterminado:");
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel5.setText("Tamaño:");
+        tamanoCampoLbl.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        tamanoCampoLbl.setText("Tamaño:");
 
         TamanoCC.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
         TipoCC.setModel(
                 new javax.swing.DefaultComboBoxModel<>(
                         new String[] {"ENTERO", "DECIMAL", "FECHA", "TEXTO", "BOOLEANO"}));
+        TipoCC.addItemListener(this::TipoCCItemStateChanged);
 
         LlaveCC.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         LlaveCC.setText("Llave primaria");
 
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jButton1.setText("Crear");
-        jButton1.addMouseListener(
+        crearCampoBtn.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        crearCampoBtn.setText("Crear");
+        crearCampoBtn.addMouseListener(
                 new java.awt.event.MouseAdapter() {
                     public void mouseClicked(java.awt.event.MouseEvent evt) {
-                        jButton1MouseClicked(evt);
+                        crearCampoBtnMouseClicked(evt);
                     }
                 });
 
@@ -370,7 +371,7 @@ public class VentanaPrincipal extends JFrame {
                                 CrearCampoLayout.createSequentialGroup()
                                         .addGap(235, 235, 235)
                                         .addComponent(
-                                                jButton1,
+                                                crearCampoBtn,
                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
                                                 137,
                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -380,7 +381,7 @@ public class VentanaPrincipal extends JFrame {
                         .addGroup(
                                 CrearCampoLayout.createSequentialGroup()
                                         .addGap(132, 132, 132)
-                                        .addComponent(jLabel5)
+                                        .addComponent(tamanoCampoLbl)
                                         .addPreferredGap(
                                                 javax.swing.LayoutStyle.ComponentPlacement.RELATED,
                                                 javax.swing.GroupLayout.DEFAULT_SIZE,
@@ -434,7 +435,7 @@ public class VentanaPrincipal extends JFrame {
                                                 CrearCampoLayout.createParallelGroup(
                                                                 javax.swing.GroupLayout.Alignment
                                                                         .BASELINE)
-                                                        .addComponent(jLabel5)
+                                                        .addComponent(tamanoCampoLbl)
                                                         .addComponent(jLabel4))
                                         .addPreferredGap(
                                                 javax.swing.LayoutStyle.ComponentPlacement
@@ -471,7 +472,7 @@ public class VentanaPrincipal extends JFrame {
                                                         .addComponent(ObligatorioCC))
                                         .addGap(54, 54, 54)
                                         .addComponent(
-                                                jButton1,
+                                                crearCampoBtn,
                                                 javax.swing.GroupLayout.PREFERRED_SIZE,
                                                 48,
                                                 javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -950,6 +951,20 @@ public class VentanaPrincipal extends JFrame {
         pack();
     } // </editor-fold>//GEN-END:initComponents
 
+    private void TipoCCItemStateChanged(
+            java.awt.event.ItemEvent evt) { // GEN-FIRST:event_TipoCCItemStateChanged
+        String seleccionado = TipoCC.getSelectedItem().toString();
+        try {
+            TipoCampo tipoSeleccionado = TipoCampo.valueOf(seleccionado);
+            boolean esTipoTexto = tipoSeleccionado == TipoCampo.TEXTO;
+
+            tamanoCampoLbl.setVisible(esTipoTexto);
+            TamanoCC.setVisible(esTipoTexto);
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showConfirmDialog(this, "", "", JOptionPane.ERROR_MESSAGE);
+        }
+    } // GEN-LAST:event_TipoCCItemStateChanged
+
     private void crearArchivoMItemActionPerformed(
             ActionEvent evt) { // GEN-FIRST:event_crearArchivoMItemActionPerformed
         String nombre =
@@ -971,8 +986,10 @@ public class VentanaPrincipal extends JFrame {
             File file = new File(nombre);
             if (file.createNewFile()) {
                 ruta = file.getAbsolutePath();
-                metadata.guardar(new File(ruta));
-                Portada.setVisible(false);
+                metadata = new Metadata(nombre, 1);
+                metadata.guardar(file);
+
+                portadaPanel.setVisible(false);
                 DBMS.setVisible(true);
                 JOptionPane.showMessageDialog(this, "Archivo creado exitosamente.");
             } else {
@@ -985,71 +1002,83 @@ public class VentanaPrincipal extends JFrame {
         }
     } // GEN-LAST:event_crearArchivoMItemActionPerformed
 
-    private void guardarMetadata(File file, Metadata meta) throws IOException {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-            bw.write("[ARCHIVO]\n");
-            bw.write(
-                    "Nombre="
-                            + meta.obtenerNombreArchivo()
-                                    .substring(0, meta.obtenerNombreArchivo().length() - 4)
-                            + "\n");
-            bw.write("Version=" + meta.obtenerVersionFormato() + "\n");
-            bw.write("CampoSiguienteId=" + (meta.obtenerCampos().size() + 1) + "\n");
-            bw.write("[LLAVE_PRIMARIA]\n");
-            bw.write("Campo=" + meta.obtenerLlavePrimariaId() + "\n");
-            bw.write("[CAMPOS]\n");
+    private void crearCampoBtnMouseClicked(MouseEvent evt) { // GEN-FIRST:event_jButton1MouseClicked
+        if (metadata == null) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Primero debe crear o abrir un archivo.",
+                    "Aviso",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
         }
-    }
 
-    private void jButton1MouseClicked(MouseEvent evt) { // GEN-FIRST:event_jButton1MouseClicked
-        if (!NombreCC.getText().equalsIgnoreCase("")) {
-            if ((int) TamanoCC.getValue() >= 0) {
-                String nombre = NombreCC.getText();
-                TipoCampo tipo = TipoCampo.valueOf(TipoCC.getSelectedItem().toString());
-                int tamano = (int) TamanoCC.getValue();
-                boolean obligatorio = ObligatorioCC.isSelected();
-                String valorPredeterminado = valorPredeterminadoCC.getText();
-                if (LlaveCC.isSelected()) {
-                    Campo campo =
-                            metadata.agregarCampo(
-                                    nombre,
-                                    tipo,
-                                    tamano,
-                                    obligatorio,
-                                    valorPredeterminado); // Jacob sabe como se hace
-                    metadata.establecerLlavePrimaria(campo.obtenerId());
-                } else {
-                    metadata.agregarCampo(nombre, tipo, tamano, obligatorio, valorPredeterminado);
-                }
-            }
+        String nombre = NombreCC.getText().trim();
+        if (nombre.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "El nombre del campo no puede estar vacío.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            TipoCampo tipo = TipoCampo.valueOf(TipoCC.getSelectedItem().toString());
+            int tamano = (int) TamanoCC.getValue();
+            boolean obligatorio = ObligatorioCC.isSelected();
+            String valorPredeterminado = valorPredeterminadoCC.getText().trim();
+
+            // Llamamos al método de tu clase Metadata
+            metadata.agregarCampo(nombre, tipo, tamano, obligatorio, valorPredeterminado);
+
+            JOptionPane.showMessageDialog(this, "¡Campo agregado con éxito!");
+
+            // Opcional: limpiar formulario después de crear
+            NombreCC.setText("");
+            TamanoCC.setValue(0);
+            ObligatorioCC.setSelected(false);
+            valorPredeterminadoCC.setText("");
+
+            // Opcional: guardar automáticamente los cambios en el archivo
+            metadata.guardar(new File(ruta));
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Error al agregar el campo: " + ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     } // GEN-LAST:event_jButton1MouseClicked
 
     private void abrirArchivoMItemActionPerformed(
             ActionEvent evt) { // GEN-FIRST:event_abrirArchivoMItemActionPerformed
-        if (ruta == null) {
-            JFileChooser selector = new JFileChooser();
-            int seleccionado = selector.showOpenDialog(null);
-            if (seleccionado == JFileChooser.APPROVE_OPTION) {
-                File file = selector.getSelectedFile();
-                ruta = file.getAbsolutePath();
-                try {
-                    FileReader fr = new FileReader(file);
-                    BufferedReader br = new BufferedReader(fr);
-                    metadata = Metadata.leer(br);
-                    br.close();
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, "Error al abrir el archivo: " + e);
+        JFileChooser selector = new JFileChooser();
+        int seleccionado = selector.showOpenDialog(this);
+        if (seleccionado == JFileChooser.APPROVE_OPTION) {
+            File file = selector.getSelectedFile();
+            ruta = file.getAbsolutePath();
+            try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+                metadata = Metadata.leer(br);
+                if (metadata != null) {
+                    portadaPanel.setVisible(false);
+                    DBMS.setVisible(true);
+                    JOptionPane.showMessageDialog(this, "Archivo abierto exitosamente");
+                } else {
+                    JOptionPane.showMessageDialog(this, "El formato del archivo no es valido");
                     ruta = null;
-                    metadata = null;
                 }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Error al abrir el archivo: " + e);
+                ruta = null;
+                metadata = null;
             }
         }
     } // GEN-LAST:event_abrirArchivoMItemActionPerformed
 
     private void ComenzarMouseClicked(
             java.awt.event.MouseEvent evt) { // GEN-FIRST:event_ComenzarMouseClicked
-        Portada.setVisible(false);
+        portadaPanel.setVisible(false);
         DBMS.setVisible(true);
     } // GEN-LAST:event_ComenzarMouseClicked
 
@@ -1099,7 +1128,6 @@ public class VentanaPrincipal extends JFrame {
     private javax.swing.JButton Buscar_jButton;
     private javax.swing.JPanel Campos;
     private javax.swing.JButton Cargarregistrosdeprueba_jButton;
-    private javax.swing.JButton Comenzar;
     private javax.swing.JPanel CrearCampo;
     private javax.swing.JButton Cruzararchivos_jButton1;
     private javax.swing.JPanel DBMS;
@@ -1114,39 +1142,44 @@ public class VentanaPrincipal extends JFrame {
     private javax.swing.JTextField NombreCC;
     private javax.swing.JTextField NombreMLCampo;
     private javax.swing.JCheckBox ObligatorioCC;
-    private javax.swing.JPanel Portada;
     private javax.swing.JPanel Registros;
     private javax.swing.JSpinner TamanoCC;
     private javax.swing.JSpinner TamanoMLCampo;
     private javax.swing.JComboBox<String> TipoCC;
     private javax.swing.JComboBox<String> TipoMLCampo;
     private javax.swing.JMenuItem abrirArchivoMItem;
+    private javax.swing.JButton abrirArchivoPortadaBtn;
     private javax.swing.JMenuItem cerrarArchivoMItem;
     private javax.swing.JMenuItem crearArchivoMItem;
+    private javax.swing.JButton crearCampoBtn;
+    private javax.swing.JPanel ctaPanel;
     private javax.swing.JMenuItem guardarArchivoMItem1;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JMenu menuArchivo;
     private javax.swing.JMenuBar menubar;
+    private javax.swing.JButton nuevoArchivoPortadaBtn;
     private javax.swing.JPanel panelPadre;
+    private javax.swing.JPanel portadaCtaPanel;
+    private javax.swing.JLabel portadaIconLabel;
+    private javax.swing.JPanel portadaIconPanel;
+    private javax.swing.JPanel portadaPanel;
     private javax.swing.JMenuItem salirMItem;
     private javax.swing.JPopupMenu.Separator sepMenuArchivos;
-    private javax.swing.JLabel tituloLabel;
-    private javax.swing.JLabel tituloLabel1;
+    private javax.swing.JLabel tamanoCampoLbl;
+    private javax.swing.JLabel textoBienvenidaLbl;
+    private javax.swing.JLabel textoBienvenidaLbl1;
+    private javax.swing.JPanel textoBienvenidaPanel;
     private javax.swing.JTextField valorPredeterminadoCC;
     // End of variables declaration//GEN-END:variables
 }
