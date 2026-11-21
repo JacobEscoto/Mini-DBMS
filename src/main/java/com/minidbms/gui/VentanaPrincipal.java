@@ -210,13 +210,12 @@ public class VentanaPrincipal extends JFrame {
         menuArchivo = new javax.swing.JMenu();
         crearArchivoMItem = new javax.swing.JMenuItem();
         abrirArchivoMItem = new javax.swing.JMenuItem();
-        guardarArchivoMItem1 = new javax.swing.JMenuItem();
+        guardarArchivoMItem = new javax.swing.JMenuItem();
         cerrarArchivoMItem = new javax.swing.JMenuItem();
         sepMenuArchivos = new javax.swing.JPopupMenu.Separator();
         salirMItem = new javax.swing.JMenuItem();
 
         crearCampoDialogo.setTitle("Crear Campo");
-        crearCampoDialogo.setMaximumSize(new java.awt.Dimension(462, 357));
         crearCampoDialogo.setMinimumSize(new java.awt.Dimension(462, 357));
         crearCampoDialogo.setModal(true);
         crearCampoDialogo.setResizable(false);
@@ -540,6 +539,10 @@ public class VentanaPrincipal extends JFrame {
         tablaCamposPanel.setOpaque(false);
         tablaCamposPanel.setLayout(new java.awt.GridLayout(1, 0));
 
+        tablaCampos.setBorder(
+                javax.swing.BorderFactory.createCompoundBorder(
+                        javax.swing.BorderFactory.createEmptyBorder(1, 5, 5, 5), null));
+        tablaCampos.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         tablaCampos.setModel(
                 new javax.swing.table.DefaultTableModel(
                         new Object[][] {
@@ -579,11 +582,12 @@ public class VentanaPrincipal extends JFrame {
         abrirArchivoMItem.addActionListener(this::abrirArchivoMItemActionPerformed);
         menuArchivo.add(abrirArchivoMItem);
 
-        guardarArchivoMItem1.setAccelerator(
+        guardarArchivoMItem.setAccelerator(
                 javax.swing.KeyStroke.getKeyStroke(
                         java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        guardarArchivoMItem1.setText("Guardar Archivo");
-        menuArchivo.add(guardarArchivoMItem1);
+        guardarArchivoMItem.setText("Guardar Archivo");
+        guardarArchivoMItem.addActionListener(this::guardarArchivoMItemActionPerformed);
+        menuArchivo.add(guardarArchivoMItem);
 
         cerrarArchivoMItem.setAccelerator(
                 javax.swing.KeyStroke.getKeyStroke(
@@ -606,6 +610,19 @@ public class VentanaPrincipal extends JFrame {
 
         pack();
     } // </editor-fold>//GEN-END:initComponents
+
+    private void guardarArchivoMItemActionPerformed(
+            java.awt.event.ActionEvent evt) { // GEN-FIRST:event_guardarArchivoMItemActionPerformed
+        if (!controlador.hayArchivoAbierto()) {
+            return;
+        }
+        try {
+            controlador.guardar();
+            info("Archivo guardado correctamente");
+        } catch (IOException | IllegalStateException ex) {
+            error("Error al guardar: " + ex.getMessage());
+        }
+    } // GEN-LAST:event_guardarArchivoMItemActionPerformed
 
     private void cancelarCampoNuevoBtnMouseClicked(
             java.awt.event.MouseEvent evt) { // GEN-FIRST:event_cancelarCampoNuevoBtnMouseClicked
@@ -793,7 +810,7 @@ public class VentanaPrincipal extends JFrame {
     private javax.swing.Box.Filler filler8;
     private javax.swing.Box.Filler filler9;
     private javax.swing.JPanel formCampoNuevoPanel;
-    private javax.swing.JMenuItem guardarArchivoMItem1;
+    private javax.swing.JMenuItem guardarArchivoMItem;
     private javax.swing.JSpinner longitudCampoSpinner;
     private javax.swing.JLabel longitudCampoTextoLbl;
     private javax.swing.JMenu menuArchivo;

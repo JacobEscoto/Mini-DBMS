@@ -349,7 +349,7 @@ public class Metadata {
     }
 
     public void guardar(File file) throws IOException {
-        if (llavePrimariaId != -1) {
+        if (!campos.isEmpty() && llavePrimariaId == -1) {
             throw new IllegalStateException("Se debe definir una llave primaria antes de guardar");
         }
 
