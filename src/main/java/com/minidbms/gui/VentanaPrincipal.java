@@ -1,16 +1,21 @@
 package com.minidbms.gui;
 
 import com.minidbms.excepciones.ArchivoInvalidoException;
+import com.minidbms.excepciones.CampoDuplicadoException;
 import com.minidbms.gui.acciones.ControladorApp;
 import com.minidbms.gui.utilidades.PaletaColores;
 import com.minidbms.modelo.Campo;
+import com.minidbms.modelo.TipoCampo;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
 
 public class VentanaPrincipal extends JFrame {
@@ -18,13 +23,27 @@ public class VentanaPrincipal extends JFrame {
     private final ControladorApp controlador;
     private static PaletaColores paletaColores;
 
+    private final DefaultComboBoxModel modeloTipoCampo;
+    private SpinnerModel enteroModeloSpinner;
+    private SpinnerModel decimalModeloSpinner;
+
     private static final String NOMBRE_APLICACION = "Mini DBMS";
 
     public VentanaPrincipal(ControladorApp controlador) {
         this.controlador = controlador;
         super(NOMBRE_APLICACION);
+
+        // Establecer modelo para tipo de campo
+        modeloTipoCampo = new DefaultComboBoxModel(TipoCampo.values());
+
+        // inicializar modelo de spinners (enteros y decimales)
+        iniciarModelosNumericos();
+
         initComponents();
         setLocationRelativeTo(null);
+
+        tipoCampoCombo.setSelectedIndex(0);
+        alternarComponentesPorTipoCampo();
 
         // acciones del menú de la aplicación
         salirMItem.addActionListener(e -> controlador.salir());
@@ -32,14 +51,22 @@ public class VentanaPrincipal extends JFrame {
         panelOperaciones.setVisible(false);
         portadaPanel.setVisible(true);
 
-        DefaultTableModel modelo = (DefaultTableModel) tablaCampos.getModel();
-        tablaCampos.setModel(modelo);
-        modelo.setColumnCount(0);
-        modelo.setRowCount(0);
-        modelo.setColumnIdentifiers(
+        // Establecer identificadores para cada columna de la tabla `Campos`
+        DefaultTableModel modeloTablaCampo = (DefaultTableModel) tablaCampos.getModel();
+        tablaCampos.setModel(modeloTablaCampo);
+        modeloTablaCampo.setColumnCount(0);
+        modeloTablaCampo.setRowCount(0);
+        modeloTablaCampo.setColumnIdentifiers(
                 new String[] {
                     "ID", "Nombre", "Tipo", "Longitud Máxima", "Obligatorio", "Valor por defecto"
                 });
+    }
+
+    private void iniciarModelosNumericos() {
+        this.enteroModeloSpinner =
+                new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
+
+        this.decimalModeloSpinner = new SpinnerNumberModel(0.0, -1_000_000.0, 1_000_000.0, 0.1);
     }
 
     private void actualizarTablaCampos() {
@@ -77,6 +104,87 @@ public class VentanaPrincipal extends JFrame {
 
         crearCampoDialogo = new javax.swing.JDialog();
         dialogPanelPadre = new javax.swing.JPanel();
+        tituloCampoNuevoDialogPanel = new javax.swing.JPanel();
+        tituloCampoNuevoLbl = new javax.swing.JLabel();
+        formCampoNuevoPanel = new javax.swing.JPanel();
+        nombreCampoPanel = new javax.swing.JPanel();
+        filler16 =
+                new javax.swing.Box.Filler(
+                        new java.awt.Dimension(20, 0),
+                        new java.awt.Dimension(20, 0),
+                        new java.awt.Dimension(20, 32767));
+        campoNuevoNombreLbl = new javax.swing.JLabel();
+        filler18 =
+                new javax.swing.Box.Filler(
+                        new java.awt.Dimension(20, 0),
+                        new java.awt.Dimension(20, 0),
+                        new java.awt.Dimension(32767, 0));
+        nombreCampoInput = new javax.swing.JTextField();
+        filler17 =
+                new javax.swing.Box.Filler(
+                        new java.awt.Dimension(0, 0),
+                        new java.awt.Dimension(20, 0),
+                        new java.awt.Dimension(30, 0));
+        obligatorioCheckbox = new javax.swing.JCheckBox();
+        filler15 =
+                new javax.swing.Box.Filler(
+                        new java.awt.Dimension(20, 0),
+                        new java.awt.Dimension(20, 0),
+                        new java.awt.Dimension(20, 32767));
+        tipoCampoPanel = new javax.swing.JPanel();
+        filler2 =
+                new javax.swing.Box.Filler(
+                        new java.awt.Dimension(10, 0),
+                        new java.awt.Dimension(20, 0),
+                        new java.awt.Dimension(20, 32767));
+        tipoCampoNuevoLbl = new javax.swing.JLabel();
+        filler3 =
+                new javax.swing.Box.Filler(
+                        new java.awt.Dimension(10, 0),
+                        new java.awt.Dimension(50, 0),
+                        new java.awt.Dimension(100, 32767));
+        tipoCampoCombo = new javax.swing.JComboBox<>();
+        filler4 =
+                new javax.swing.Box.Filler(
+                        new java.awt.Dimension(10, 0),
+                        new java.awt.Dimension(35, 0),
+                        new java.awt.Dimension(50, 32767));
+        longitudCampoTextoLbl = new javax.swing.JLabel();
+        filler14 =
+                new javax.swing.Box.Filler(
+                        new java.awt.Dimension(0, 0),
+                        new java.awt.Dimension(1, 0),
+                        new java.awt.Dimension(32767, 0));
+        longitudCampoSpinner = new javax.swing.JSpinner();
+        filler6 =
+                new javax.swing.Box.Filler(
+                        new java.awt.Dimension(10, 0),
+                        new java.awt.Dimension(20, 0),
+                        new java.awt.Dimension(20, 32767));
+        valorDefaultCampoPanel = new javax.swing.JPanel();
+        filler8 =
+                new javax.swing.Box.Filler(
+                        new java.awt.Dimension(10, 0),
+                        new java.awt.Dimension(20, 0),
+                        new java.awt.Dimension(20, 32767));
+        valorDefectoLbl = new javax.swing.JLabel();
+        filler19 =
+                new javax.swing.Box.Filler(
+                        new java.awt.Dimension(10, 0),
+                        new java.awt.Dimension(50, 0),
+                        new java.awt.Dimension(60, 0));
+        valorDefectoField = new javax.swing.JTextField();
+        valorDefectoSpinner = new javax.swing.JSpinner();
+        valorDefectoCheckbox = new javax.swing.JCheckBox();
+        filler9 =
+                new javax.swing.Box.Filler(
+                        new java.awt.Dimension(10, 0),
+                        new java.awt.Dimension(20, 0),
+                        new java.awt.Dimension(20, 32767));
+        botonesCampoNuevoPanel = new javax.swing.JPanel();
+        botonesCampoNuevoContenedor = new javax.swing.JPanel();
+        cancelarCampoNuevoBtn = new javax.swing.JButton();
+        agregarCampoNuevoBtn = new javax.swing.JButton();
         panelPadre = new javax.swing.JPanel();
         portadaPanel = new javax.swing.JPanel();
         portadaIconPanel = new javax.swing.JPanel();
@@ -92,23 +200,8 @@ public class VentanaPrincipal extends JFrame {
         tabsPane = new javax.swing.JTabbedPane();
         camposPanel = new javax.swing.JPanel();
         operacionesCampoPanel = new javax.swing.JPanel();
-        filler1 =
-                new javax.swing.Box.Filler(
-                        new java.awt.Dimension(50, 0),
-                        new java.awt.Dimension(150, 0),
-                        new java.awt.Dimension(200, 32767));
-        jButton1 = new javax.swing.JButton();
-        filler2 =
-                new javax.swing.Box.Filler(
-                        new java.awt.Dimension(20, 0),
-                        new java.awt.Dimension(20, 0),
-                        new java.awt.Dimension(50, 32767));
+        agregarCampoBtn = new javax.swing.JButton();
         modificarCampoBtn = new javax.swing.JButton();
-        filler3 =
-                new javax.swing.Box.Filler(
-                        new java.awt.Dimension(20, 0),
-                        new java.awt.Dimension(20, 0),
-                        new java.awt.Dimension(50, 32767));
         borrarCampoBtn = new javax.swing.JButton();
         tablaCamposPanel = new javax.swing.JPanel();
         tablaCamposScrollPane = new javax.swing.JScrollPane();
@@ -123,20 +216,175 @@ public class VentanaPrincipal extends JFrame {
         salirMItem = new javax.swing.JMenuItem();
 
         crearCampoDialogo.setTitle("Crear Campo");
-        crearCampoDialogo.setMinimumSize(new java.awt.Dimension(460, 500));
+        crearCampoDialogo.setMaximumSize(new java.awt.Dimension(462, 357));
+        crearCampoDialogo.setMinimumSize(new java.awt.Dimension(462, 357));
         crearCampoDialogo.setModal(true);
+        crearCampoDialogo.setResizable(false);
 
-        javax.swing.GroupLayout dialogPanelPadreLayout =
-                new javax.swing.GroupLayout(dialogPanelPadre);
-        dialogPanelPadre.setLayout(dialogPanelPadreLayout);
-        dialogPanelPadreLayout.setHorizontalGroup(
-                dialogPanelPadreLayout
+        dialogPanelPadre.setBackground(paletaColores.FONDO_SECUNDARIO.color());
+        dialogPanelPadre.setLayout(new java.awt.BorderLayout());
+
+        tituloCampoNuevoDialogPanel.setOpaque(false);
+
+        tituloCampoNuevoLbl.setFont(new java.awt.Font("SansSerif", 1, 22)); // NOI18N
+        tituloCampoNuevoLbl.setForeground(paletaColores.TEXTO_PRIMARIO.color());
+        tituloCampoNuevoLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        tituloCampoNuevoLbl.setText("Campo Nuevo");
+
+        javax.swing.GroupLayout tituloCampoNuevoDialogPanelLayout =
+                new javax.swing.GroupLayout(tituloCampoNuevoDialogPanel);
+        tituloCampoNuevoDialogPanel.setLayout(tituloCampoNuevoDialogPanelLayout);
+        tituloCampoNuevoDialogPanelLayout.setHorizontalGroup(
+                tituloCampoNuevoDialogPanelLayout
                         .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 460, Short.MAX_VALUE));
-        dialogPanelPadreLayout.setVerticalGroup(
-                dialogPanelPadreLayout
+                        .addComponent(
+                                tituloCampoNuevoLbl,
+                                javax.swing.GroupLayout.Alignment.TRAILING,
+                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                462,
+                                Short.MAX_VALUE));
+        tituloCampoNuevoDialogPanelLayout.setVerticalGroup(
+                tituloCampoNuevoDialogPanelLayout
                         .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 500, Short.MAX_VALUE));
+                        .addGroup(
+                                tituloCampoNuevoDialogPanelLayout
+                                        .createSequentialGroup()
+                                        .addGap(41, 41, 41)
+                                        .addComponent(tituloCampoNuevoLbl)
+                                        .addContainerGap(41, Short.MAX_VALUE)));
+
+        dialogPanelPadre.add(tituloCampoNuevoDialogPanel, java.awt.BorderLayout.PAGE_START);
+
+        formCampoNuevoPanel.setOpaque(false);
+        formCampoNuevoPanel.setLayout(new java.awt.GridLayout(4, 1, 12, 0));
+
+        nombreCampoPanel.setForeground(paletaColores.TEXTO_PRIMARIO.color());
+        nombreCampoPanel.setOpaque(false);
+        nombreCampoPanel.setLayout(
+                new javax.swing.BoxLayout(nombreCampoPanel, javax.swing.BoxLayout.LINE_AXIS));
+        nombreCampoPanel.add(filler16);
+
+        campoNuevoNombreLbl.setFont(new java.awt.Font("SansSerif", 1, 16)); // NOI18N
+        campoNuevoNombreLbl.setForeground(paletaColores.TEXTO_PRIMARIO.color());
+        campoNuevoNombreLbl.setText("Nombre:");
+        nombreCampoPanel.add(campoNuevoNombreLbl);
+        nombreCampoPanel.add(filler18);
+
+        nombreCampoInput.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        nombreCampoInput.setForeground(paletaColores.TEXTO_PRIMARIO.color());
+        nombreCampoInput.setMaximumSize(new java.awt.Dimension(2147483647, 25));
+        nombreCampoInput.setMinimumSize(new java.awt.Dimension(64, 35));
+        nombreCampoInput.setPreferredSize(new java.awt.Dimension(64, 35));
+        nombreCampoPanel.add(nombreCampoInput);
+        nombreCampoPanel.add(filler17);
+
+        obligatorioCheckbox.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        obligatorioCheckbox.setForeground(paletaColores.TEXTO_PRIMARIO.color());
+        obligatorioCheckbox.setText("Obligatorio");
+        nombreCampoPanel.add(obligatorioCheckbox);
+        nombreCampoPanel.add(filler15);
+
+        formCampoNuevoPanel.add(nombreCampoPanel);
+
+        tipoCampoPanel.setOpaque(false);
+        tipoCampoPanel.setLayout(
+                new javax.swing.BoxLayout(tipoCampoPanel, javax.swing.BoxLayout.LINE_AXIS));
+        tipoCampoPanel.add(filler2);
+
+        tipoCampoNuevoLbl.setFont(new java.awt.Font("SansSerif", 1, 16)); // NOI18N
+        tipoCampoNuevoLbl.setForeground(paletaColores.TEXTO_PRIMARIO.color());
+        tipoCampoNuevoLbl.setText("Tipo:");
+        tipoCampoPanel.add(tipoCampoNuevoLbl);
+        tipoCampoPanel.add(filler3);
+
+        tipoCampoCombo.setModel(modeloTipoCampo);
+        tipoCampoCombo.setMaximumSize(new java.awt.Dimension(32767, 25));
+        tipoCampoCombo.addItemListener(this::tipoCampoComboItemStateChanged);
+        tipoCampoPanel.add(tipoCampoCombo);
+        tipoCampoPanel.add(filler4);
+
+        longitudCampoTextoLbl.setFont(new java.awt.Font("SansSerif", 1, 16)); // NOI18N
+        longitudCampoTextoLbl.setForeground(paletaColores.TEXTO_PRIMARIO.color());
+        longitudCampoTextoLbl.setText("Longitud:");
+        tipoCampoPanel.add(longitudCampoTextoLbl);
+        tipoCampoPanel.add(filler14);
+
+        longitudCampoSpinner.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        longitudCampoSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
+        longitudCampoSpinner.setMaximumSize(new java.awt.Dimension(32767, 25));
+        longitudCampoSpinner.setMinimumSize(new java.awt.Dimension(64, 25));
+        longitudCampoSpinner.setPreferredSize(new java.awt.Dimension(64, 25));
+        tipoCampoPanel.add(longitudCampoSpinner);
+        tipoCampoPanel.add(filler6);
+
+        formCampoNuevoPanel.add(tipoCampoPanel);
+
+        valorDefaultCampoPanel.setOpaque(false);
+        valorDefaultCampoPanel.setLayout(
+                new javax.swing.BoxLayout(valorDefaultCampoPanel, javax.swing.BoxLayout.LINE_AXIS));
+        valorDefaultCampoPanel.add(filler8);
+
+        valorDefectoLbl.setFont(new java.awt.Font("SansSerif", 1, 16)); // NOI18N
+        valorDefectoLbl.setForeground(paletaColores.TEXTO_PRIMARIO.color());
+        valorDefectoLbl.setText("Valor por defecto:");
+        valorDefaultCampoPanel.add(valorDefectoLbl);
+        valorDefaultCampoPanel.add(filler19);
+
+        valorDefectoField.setMaximumSize(new java.awt.Dimension(2147483647, 25));
+        valorDefectoField.setPreferredSize(new java.awt.Dimension(97, 25));
+        valorDefaultCampoPanel.add(valorDefectoField);
+
+        valorDefectoSpinner.setMaximumSize(new java.awt.Dimension(32767, 25));
+        valorDefectoSpinner.setMinimumSize(new java.awt.Dimension(64, 25));
+        valorDefectoSpinner.setPreferredSize(new java.awt.Dimension(64, 25));
+        valorDefaultCampoPanel.add(valorDefectoSpinner);
+
+        valorDefectoCheckbox.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        valorDefectoCheckbox.setForeground(paletaColores.TEXTO_PRIMARIO.color());
+        valorDefectoCheckbox.setText("True");
+        valorDefaultCampoPanel.add(valorDefectoCheckbox);
+        valorDefaultCampoPanel.add(filler9);
+
+        formCampoNuevoPanel.add(valorDefaultCampoPanel);
+
+        botonesCampoNuevoPanel.setOpaque(false);
+        botonesCampoNuevoPanel.setLayout(new java.awt.BorderLayout());
+
+        botonesCampoNuevoContenedor.setOpaque(false);
+        botonesCampoNuevoContenedor.setLayout(
+                new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 15));
+
+        cancelarCampoNuevoBtn.setBackground(paletaColores.FONDO_PESTANIAS.color());
+        cancelarCampoNuevoBtn.setFont(new java.awt.Font("SansSerif", 1, 15)); // NOI18N
+        cancelarCampoNuevoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
+        cancelarCampoNuevoBtn.setText("Cancelar");
+        cancelarCampoNuevoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        cancelarCampoNuevoBtn.addMouseListener(
+                new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent evt) {
+                        cancelarCampoNuevoBtnMouseClicked(evt);
+                    }
+                });
+        botonesCampoNuevoContenedor.add(cancelarCampoNuevoBtn);
+
+        agregarCampoNuevoBtn.setBackground(paletaColores.ACENTO_PRIMARIO.color());
+        agregarCampoNuevoBtn.setFont(new java.awt.Font("SansSerif", 1, 15)); // NOI18N
+        agregarCampoNuevoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
+        agregarCampoNuevoBtn.setText("Agregar");
+        agregarCampoNuevoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        agregarCampoNuevoBtn.addMouseListener(
+                new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent evt) {
+                        agregarCampoNuevoBtnMouseClicked(evt);
+                    }
+                });
+        botonesCampoNuevoContenedor.add(agregarCampoNuevoBtn);
+
+        botonesCampoNuevoPanel.add(botonesCampoNuevoContenedor, java.awt.BorderLayout.LINE_END);
+
+        formCampoNuevoPanel.add(botonesCampoNuevoPanel);
+
+        dialogPanelPadre.add(formCampoNuevoPanel, java.awt.BorderLayout.CENTER);
 
         crearCampoDialogo.getContentPane().add(dialogPanelPadre, java.awt.BorderLayout.CENTER);
 
@@ -245,31 +493,45 @@ public class VentanaPrincipal extends JFrame {
         operacionesCampoPanel.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         operacionesCampoPanel.setOpaque(false);
         operacionesCampoPanel.setPreferredSize(new java.awt.Dimension(1134, 125));
-        operacionesCampoPanel.setLayout(
-                new javax.swing.BoxLayout(operacionesCampoPanel, javax.swing.BoxLayout.X_AXIS));
-        operacionesCampoPanel.add(filler1);
+        java.awt.FlowLayout flowLayout1 =
+                new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 25, 45);
+        flowLayout1.setAlignOnBaseline(true);
+        operacionesCampoPanel.setLayout(flowLayout1);
 
-        jButton1.setBackground(paletaColores.ACENTO_PRIMARIO.color());
-        jButton1.setFont(new java.awt.Font("SansSerif", 1, 16)); // NOI18N
-        jButton1.setForeground(paletaColores.TEXTO_PRIMARIO.color());
-        jButton1.setText("Agregar campo");
-        jButton1.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 18, 4, 18));
-        operacionesCampoPanel.add(jButton1);
-        operacionesCampoPanel.add(filler2);
+        agregarCampoBtn.setBackground(paletaColores.ACENTO_PRIMARIO.color());
+        agregarCampoBtn.setFont(new java.awt.Font("SansSerif", 1, 16)); // NOI18N
+        agregarCampoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
+        agregarCampoBtn.setText("Agregar campo");
+        agregarCampoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 18, 4, 18));
+        agregarCampoBtn.setMaximumSize(new java.awt.Dimension(160, 35));
+        agregarCampoBtn.setMinimumSize(new java.awt.Dimension(158, 35));
+        agregarCampoBtn.setPreferredSize(new java.awt.Dimension(160, 35));
+        agregarCampoBtn.addMouseListener(
+                new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent evt) {
+                        agregarCampoBtnMouseClicked(evt);
+                    }
+                });
+        operacionesCampoPanel.add(agregarCampoBtn);
 
         modificarCampoBtn.setBackground(paletaColores.ACENTO_PRIMARIO.color());
         modificarCampoBtn.setFont(new java.awt.Font("SansSerif", 1, 16)); // NOI18N
         modificarCampoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         modificarCampoBtn.setText("Modificar");
         modificarCampoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 18, 4, 18));
+        modificarCampoBtn.setMaximumSize(new java.awt.Dimension(160, 35));
+        modificarCampoBtn.setMinimumSize(new java.awt.Dimension(158, 35));
+        modificarCampoBtn.setPreferredSize(new java.awt.Dimension(160, 35));
         operacionesCampoPanel.add(modificarCampoBtn);
-        operacionesCampoPanel.add(filler3);
 
         borrarCampoBtn.setBackground(paletaColores.ACENTO_PRIMARIO.color());
         borrarCampoBtn.setFont(new java.awt.Font("SansSerif", 1, 16)); // NOI18N
         borrarCampoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         borrarCampoBtn.setText("Borrar");
         borrarCampoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 18, 4, 18));
+        borrarCampoBtn.setMaximumSize(new java.awt.Dimension(160, 35));
+        borrarCampoBtn.setMinimumSize(new java.awt.Dimension(158, 35));
+        borrarCampoBtn.setPreferredSize(new java.awt.Dimension(160, 35));
         operacionesCampoPanel.add(borrarCampoBtn);
 
         camposPanel.add(operacionesCampoPanel, java.awt.BorderLayout.PAGE_START);
@@ -345,6 +607,91 @@ public class VentanaPrincipal extends JFrame {
         pack();
     } // </editor-fold>//GEN-END:initComponents
 
+    private void cancelarCampoNuevoBtnMouseClicked(
+            java.awt.event.MouseEvent evt) { // GEN-FIRST:event_cancelarCampoNuevoBtnMouseClicked
+        resetFormCampoNuevo();
+        crearCampoDialogo.setVisible(false);
+    } // GEN-LAST:event_cancelarCampoNuevoBtnMouseClicked
+
+    private void agregarCampoNuevoBtnMouseClicked(
+            java.awt.event.MouseEvent evt) { // GEN-FIRST:event_agregarCampoNuevoBtnMouseClicked
+        String nombreCampo = nombreCampoInput.getText().trim();
+        TipoCampo tipoSeleccionado = (TipoCampo) tipoCampoCombo.getSelectedItem();
+        boolean obligatorio = obligatorioCheckbox.isSelected();
+        int longitud =
+                tipoSeleccionado == TipoCampo.TEXTO ? (int) longitudCampoSpinner.getValue() : 0;
+        String valorPredeterminado;
+        switch (tipoSeleccionado) {
+            case TipoCampo.TEXTO, TipoCampo.FECHA ->
+                    valorPredeterminado = valorDefectoField.getText().trim();
+            case TipoCampo.ENTERO, TipoCampo.DECIMAL ->
+                    valorPredeterminado = String.valueOf(valorDefectoSpinner.getValue());
+            case TipoCampo.BOOLEANO ->
+                    valorPredeterminado = valorDefectoCheckbox.isSelected() ? "true" : "false";
+            default -> valorPredeterminado = "";
+        }
+        try {
+            controlador.crearCampo(
+                    nombreCampo, tipoSeleccionado, longitud, obligatorio, valorPredeterminado);
+            info("Campo creado exitosamente");
+            crearCampoDialogo.setVisible(false);
+            resetFormCampoNuevo();
+            actualizarTablaCampos();
+        } catch (CampoDuplicadoException | ArchivoInvalidoException ex) {
+            error("Error al crear el campo: " + ex.getMessage());
+        }
+    } // GEN-LAST:event_agregarCampoNuevoBtnMouseClicked
+
+    private void tipoCampoComboItemStateChanged(
+            java.awt.event.ItemEvent evt) { // GEN-FIRST:event_tipoCampoComboItemStateChanged
+        alternarComponentesPorTipoCampo();
+    } // GEN-LAST:event_tipoCampoComboItemStateChanged
+
+    private void alternarComponentesPorTipoCampo() {
+        TipoCampo campoSeleccionado = (TipoCampo) tipoCampoCombo.getSelectedItem();
+        longitudCampoSpinner.setEnabled(campoSeleccionado == TipoCampo.TEXTO);
+
+        switch (campoSeleccionado) {
+            case TipoCampo.TEXTO, TipoCampo.FECHA -> {
+                valorDefectoSpinner.setVisible(false);
+                valorDefectoCheckbox.setVisible(false);
+                valorDefectoField.setVisible(true);
+            }
+            case TipoCampo.DECIMAL, TipoCampo.ENTERO -> {
+                valorDefectoCheckbox.setVisible(false);
+                valorDefectoField.setVisible(false);
+                valorDefectoSpinner.setVisible(true);
+                valorDefectoSpinner.setModel(
+                        campoSeleccionado == TipoCampo.ENTERO
+                                ? enteroModeloSpinner
+                                : decimalModeloSpinner);
+            }
+            case TipoCampo.BOOLEANO -> {
+                valorDefectoSpinner.setVisible(false);
+                valorDefectoField.setVisible(false);
+                valorDefectoCheckbox.setVisible(true);
+            }
+        }
+    }
+
+    private void resetFormCampoNuevo() {
+        nombreCampoInput.setText("");
+        tipoCampoCombo.setSelectedIndex(0);
+        obligatorioCheckbox.setSelected(false);
+        valorDefectoField.setText("");
+        valorDefectoCheckbox.setSelected(false);
+        longitudCampoSpinner.setValue(1);
+        alternarComponentesPorTipoCampo();
+    }
+
+    private void agregarCampoBtnMouseClicked(
+            java.awt.event.MouseEvent evt) { // GEN-FIRST:event_agregarCampoBtnMouseClicked
+        resetFormCampoNuevo();
+        crearCampoDialogo.pack();
+        crearCampoDialogo.setLocationRelativeTo(null);
+        crearCampoDialogo.setVisible(true);
+    } // GEN-LAST:event_agregarCampoBtnMouseClicked
+
     private void tabsPaneStateChanged(
             javax.swing.event.ChangeEvent evt) { // GEN-FIRST:event_tabsPaneStateChanged
         int indexCampos = tabsPane.indexOfTab("Campos");
@@ -353,11 +700,6 @@ public class VentanaPrincipal extends JFrame {
             actualizarTablaCampos();
         }
     } // GEN-LAST:event_tabsPaneStateChanged
-
-    private void agregarCampoBtnActionPerformed(
-            java.awt.event.ActionEvent evt) { // GEN-FIRST:event_agregarCampoBtnActionPerformed
-        // TODO add your handling code here:
-    } // GEN-LAST:event_agregarCampoBtnActionPerformed
 
     private void abrirArchivoMItemActionPerformed(
             java.awt.event.ActionEvent evt) { // GEN-FIRST:event_abrirArchivoMItemActionPerformed
@@ -425,22 +767,42 @@ public class VentanaPrincipal extends JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem abrirArchivoMItem;
     private javax.swing.JButton abrirArchivoPortadaBtn;
+    private javax.swing.JButton agregarCampoBtn;
+    private javax.swing.JButton agregarCampoNuevoBtn;
     private javax.swing.JButton borrarCampoBtn;
+    private javax.swing.JPanel botonesCampoNuevoContenedor;
+    private javax.swing.JPanel botonesCampoNuevoPanel;
+    private javax.swing.JLabel campoNuevoNombreLbl;
     private javax.swing.JPanel camposPanel;
+    private javax.swing.JButton cancelarCampoNuevoBtn;
     private javax.swing.JMenuItem cerrarArchivoMItem;
     private javax.swing.JMenuItem crearArchivoMItem;
     private javax.swing.JDialog crearCampoDialogo;
     private javax.swing.JPanel ctaPanel;
     private javax.swing.JPanel dialogPanelPadre;
-    private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler14;
+    private javax.swing.Box.Filler filler15;
+    private javax.swing.Box.Filler filler16;
+    private javax.swing.Box.Filler filler17;
+    private javax.swing.Box.Filler filler18;
+    private javax.swing.Box.Filler filler19;
     private javax.swing.Box.Filler filler2;
     private javax.swing.Box.Filler filler3;
+    private javax.swing.Box.Filler filler4;
+    private javax.swing.Box.Filler filler6;
+    private javax.swing.Box.Filler filler8;
+    private javax.swing.Box.Filler filler9;
+    private javax.swing.JPanel formCampoNuevoPanel;
     private javax.swing.JMenuItem guardarArchivoMItem1;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JSpinner longitudCampoSpinner;
+    private javax.swing.JLabel longitudCampoTextoLbl;
     private javax.swing.JMenu menuArchivo;
     private javax.swing.JMenuBar menubar;
     private javax.swing.JButton modificarCampoBtn;
+    private javax.swing.JTextField nombreCampoInput;
+    private javax.swing.JPanel nombreCampoPanel;
     private javax.swing.JButton nuevoArchivoPortadaBtn;
+    private javax.swing.JCheckBox obligatorioCheckbox;
     private javax.swing.JPanel operacionesCampoPanel;
     private javax.swing.JPanel panelOperaciones;
     private javax.swing.JPanel panelPadre;
@@ -457,5 +819,15 @@ public class VentanaPrincipal extends JFrame {
     private javax.swing.JLabel textoBienvenidaLbl;
     private javax.swing.JLabel textoBienvenidaLbl1;
     private javax.swing.JPanel textoBienvenidaPanel;
+    private javax.swing.JComboBox<String> tipoCampoCombo;
+    private javax.swing.JLabel tipoCampoNuevoLbl;
+    private javax.swing.JPanel tipoCampoPanel;
+    private javax.swing.JPanel tituloCampoNuevoDialogPanel;
+    private javax.swing.JLabel tituloCampoNuevoLbl;
+    private javax.swing.JPanel valorDefaultCampoPanel;
+    private javax.swing.JCheckBox valorDefectoCheckbox;
+    private javax.swing.JTextField valorDefectoField;
+    private javax.swing.JLabel valorDefectoLbl;
+    private javax.swing.JSpinner valorDefectoSpinner;
     // End of variables declaration//GEN-END:variables
 }
