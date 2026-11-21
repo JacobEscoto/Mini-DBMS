@@ -276,16 +276,17 @@ public class Metadata {
 
                         int id = Integer.parseInt(informacion[0].trim());
                         String nombre = informacion[1].trim();
-                        TipoCampo tipo = TipoCampo.valueOf(informacion[2].trim());
+                        TipoCampo tipo = TipoCampo.valueOf(informacion[2].trim().toUpperCase());
 
                         int tamanio = 0;
                         boolean obligatorio;
                         String valorPredeterminado;
 
                         if (tipo == TipoCampo.TEXTO) {
-                            if (informacion.length < CANTIDAD_MIN_CAMPO_NON_TEXTO) {
+                            if (informacion.length < CANTIDAD_MIN_CAMPO_TEXTO) {
                                 throw new IllegalStateException(
-                                        "El campo de texto no tiene la cantidad de datos esperado");
+                                        "El campo de texto no tiene la cantidad de datos esperado: "
+                                                + linea);
                             }
                             tamanio = Integer.parseInt(informacion[3].trim());
                             String valorBoolean = informacion[4].trim();

@@ -54,6 +54,8 @@ public class Campo {
                             + longitudCoincide);
         }
 
+        ValidadorTexto.validarCaracteresProhibidos(valorPredeterminado);
+
         this.id = id;
         this.tipo = tipo;
         this.nombre = nombre.trim();
@@ -186,11 +188,10 @@ public class Campo {
                 + "|"
                 + nombre
                 + "|"
-                + tipo
+                + tipo.name()
                 + "|"
                 + (tipo == TipoCampo.TEXTO ? longitudMaxima + "|" : "")
                 + (obligatorio ? "true" : "false")
-                + "|"
-                + valorPredeterminado;
+                + (!valorPredeterminado.isEmpty() ? "|" + valorPredeterminado : "");
     }
 }

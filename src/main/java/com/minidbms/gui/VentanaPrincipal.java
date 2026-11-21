@@ -190,9 +190,18 @@ public class VentanaPrincipal extends JFrame {
         portadaIconPanel = new javax.swing.JPanel();
         portadaIconLabel = new javax.swing.JLabel();
         portadaCtaPanel = new javax.swing.JPanel();
-        textoBienvenidaPanel = new javax.swing.JPanel();
+        filler1 =
+                new javax.swing.Box.Filler(
+                        new java.awt.Dimension(0, 100),
+                        new java.awt.Dimension(0, 100),
+                        new java.awt.Dimension(32767, 100));
         textoBienvenidaLbl = new javax.swing.JLabel();
         textoBienvenidaLbl1 = new javax.swing.JLabel();
+        filler5 =
+                new javax.swing.Box.Filler(
+                        new java.awt.Dimension(0, 30),
+                        new java.awt.Dimension(0, 100),
+                        new java.awt.Dimension(32767, 100));
         ctaPanel = new javax.swing.JPanel();
         nuevoArchivoPortadaBtn = new javax.swing.JButton();
         abrirArchivoPortadaBtn = new javax.swing.JButton();
@@ -402,6 +411,7 @@ public class VentanaPrincipal extends JFrame {
         portadaIconLabel.setIcon(
                 new ImageIcon(getClass().getResource("/com/minidbms/gui/DBMS.png")));
         portadaIconLabel.setMaximumSize(new java.awt.Dimension(427, 359));
+        portadaIconLabel.setPreferredSize(new java.awt.Dimension(427, 359));
         portadaIconPanel.add(
                 portadaIconLabel,
                 new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 150, 427, 359));
@@ -409,32 +419,29 @@ public class VentanaPrincipal extends JFrame {
         portadaPanel.add(portadaIconPanel, java.awt.BorderLayout.LINE_START);
 
         portadaCtaPanel.setBackground(paletaColores.FONDO_PRIMARIO.color());
-        portadaCtaPanel.setLayout(new java.awt.BorderLayout());
-
-        textoBienvenidaPanel.setOpaque(false);
-        textoBienvenidaPanel.setPreferredSize(new java.awt.Dimension(555, 300));
-        textoBienvenidaPanel.setLayout(new java.awt.GridLayout(2, 1));
+        portadaCtaPanel.setLayout(
+                new javax.swing.BoxLayout(portadaCtaPanel, javax.swing.BoxLayout.Y_AXIS));
+        portadaCtaPanel.add(filler1);
 
         textoBienvenidaLbl.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         textoBienvenidaLbl.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         textoBienvenidaLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         textoBienvenidaLbl.setText("¡Bienvenido a");
         textoBienvenidaLbl.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
-        textoBienvenidaPanel.add(textoBienvenidaLbl);
+        portadaCtaPanel.add(textoBienvenidaLbl);
 
         textoBienvenidaLbl1.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         textoBienvenidaLbl1.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         textoBienvenidaLbl1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         textoBienvenidaLbl1.setText("Mini DBMS!");
         textoBienvenidaLbl1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        textoBienvenidaPanel.add(textoBienvenidaLbl1);
-
-        portadaCtaPanel.add(textoBienvenidaPanel, java.awt.BorderLayout.PAGE_START);
+        textoBienvenidaLbl1.setMaximumSize(new java.awt.Dimension(242, 50));
+        textoBienvenidaLbl1.setMinimumSize(new java.awt.Dimension(242, 50));
+        textoBienvenidaLbl1.setPreferredSize(new java.awt.Dimension(242, 50));
+        portadaCtaPanel.add(textoBienvenidaLbl1);
+        portadaCtaPanel.add(filler5);
 
         ctaPanel.setOpaque(false);
-        java.awt.GridBagLayout ctaPanelLayout = new java.awt.GridBagLayout();
-        ctaPanelLayout.columnWidths = new int[] {270};
-        ctaPanel.setLayout(ctaPanelLayout);
 
         nuevoArchivoPortadaBtn.setBackground(paletaColores.ACENTO_PRIMARIO.color());
         nuevoArchivoPortadaBtn.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -445,14 +452,14 @@ public class VentanaPrincipal extends JFrame {
                         javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1),
                         javax.swing.BorderFactory.createEmptyBorder(4, 10, 4, 10)));
         nuevoArchivoPortadaBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        nuevoArchivoPortadaBtn.setPreferredSize(new java.awt.Dimension(240, 30));
+        nuevoArchivoPortadaBtn.setPreferredSize(new java.awt.Dimension(240, 40));
         nuevoArchivoPortadaBtn.addMouseListener(
                 new java.awt.event.MouseAdapter() {
                     public void mouseClicked(java.awt.event.MouseEvent evt) {
                         nuevoArchivoPortadaBtnMouseClicked(evt);
                     }
                 });
-        ctaPanel.add(nuevoArchivoPortadaBtn, new java.awt.GridBagConstraints());
+        ctaPanel.add(nuevoArchivoPortadaBtn);
 
         abrirArchivoPortadaBtn.setBackground(paletaColores.ACENTO_PRIMARIO.color());
         abrirArchivoPortadaBtn.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
@@ -463,16 +470,17 @@ public class VentanaPrincipal extends JFrame {
                         javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1),
                         javax.swing.BorderFactory.createEmptyBorder(4, 10, 4, 10)));
         abrirArchivoPortadaBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        abrirArchivoPortadaBtn.setPreferredSize(new java.awt.Dimension(240, 30));
+        abrirArchivoPortadaBtn.setMargin(new java.awt.Insets(2, 40, 2, 14));
+        abrirArchivoPortadaBtn.setPreferredSize(new java.awt.Dimension(240, 40));
         abrirArchivoPortadaBtn.addMouseListener(
                 new java.awt.event.MouseAdapter() {
                     public void mouseClicked(java.awt.event.MouseEvent evt) {
                         abrirArchivoPortadaBtnMouseClicked(evt);
                     }
                 });
-        ctaPanel.add(abrirArchivoPortadaBtn, new java.awt.GridBagConstraints());
+        ctaPanel.add(abrirArchivoPortadaBtn);
 
-        portadaCtaPanel.add(ctaPanel, java.awt.BorderLayout.CENTER);
+        portadaCtaPanel.add(ctaPanel);
 
         portadaPanel.add(portadaCtaPanel, java.awt.BorderLayout.CENTER);
 
@@ -797,6 +805,7 @@ public class VentanaPrincipal extends JFrame {
     private javax.swing.JDialog crearCampoDialogo;
     private javax.swing.JPanel ctaPanel;
     private javax.swing.JPanel dialogPanelPadre;
+    private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler14;
     private javax.swing.Box.Filler filler15;
     private javax.swing.Box.Filler filler16;
@@ -806,6 +815,7 @@ public class VentanaPrincipal extends JFrame {
     private javax.swing.Box.Filler filler2;
     private javax.swing.Box.Filler filler3;
     private javax.swing.Box.Filler filler4;
+    private javax.swing.Box.Filler filler5;
     private javax.swing.Box.Filler filler6;
     private javax.swing.Box.Filler filler8;
     private javax.swing.Box.Filler filler9;
@@ -835,7 +845,6 @@ public class VentanaPrincipal extends JFrame {
     private javax.swing.JTabbedPane tabsPane;
     private javax.swing.JLabel textoBienvenidaLbl;
     private javax.swing.JLabel textoBienvenidaLbl1;
-    private javax.swing.JPanel textoBienvenidaPanel;
     private javax.swing.JComboBox<String> tipoCampoCombo;
     private javax.swing.JLabel tipoCampoNuevoLbl;
     private javax.swing.JPanel tipoCampoPanel;

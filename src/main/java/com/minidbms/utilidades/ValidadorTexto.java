@@ -2,7 +2,7 @@ package com.minidbms.utilidades;
 
 public class ValidadorTexto {
 
-    private static final String CHARS_PROHIBIDOS = "<>?[]|=\n";
+    private static final String CHARS_PROHIBIDOS = "[]|=";
 
     private ValidadorTexto() {}
 
@@ -13,7 +13,7 @@ public class ValidadorTexto {
 
         for (int i = 0; i < CHARS_PROHIBIDOS.length(); i++) {
             char prohibido = CHARS_PROHIBIDOS.charAt(i);
-            if (texto.indexOf(prohibido) >= 0) {
+            if (texto.indexOf(prohibido) != -1) {
                 throw new IllegalArgumentException(
                         "El valor de '" + texto + "' contiene un cáracter especial: " + prohibido);
             }
