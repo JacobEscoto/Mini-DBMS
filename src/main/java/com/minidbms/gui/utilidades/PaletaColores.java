@@ -8,7 +8,8 @@ public enum PaletaColores {
     FONDO_PESTANIAS("#1E1E2E"),
     TEXTO_PRIMARIO("#FFFFFF"),
     TEXTO_SECUNDARIO("#A6ADC8"),
-    ACENTO_PRIMARIO("#1E66F5");
+    ACENTO_PRIMARIO("#1E66F5"),
+    ACENTO_SILENCIADO("#E64553");
 
     private final Color color;
 

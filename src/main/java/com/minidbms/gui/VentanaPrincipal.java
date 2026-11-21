@@ -354,7 +354,7 @@ public class VentanaPrincipal extends JFrame {
         botonesCampoNuevoContenedor.setLayout(
                 new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 15));
 
-        cancelarCampoNuevoBtn.setBackground(paletaColores.FONDO_PESTANIAS.color());
+        cancelarCampoNuevoBtn.setBackground(paletaColores.ACENTO_SILENCIADO.color());
         cancelarCampoNuevoBtn.setFont(new java.awt.Font("SansSerif", 1, 15)); // NOI18N
         cancelarCampoNuevoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         cancelarCampoNuevoBtn.setText("Cancelar");
