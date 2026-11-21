@@ -2,6 +2,7 @@ package com.minidbms.gui;
 
 import com.minidbms.excepciones.ArchivoInvalidoException;
 import com.minidbms.excepciones.CampoDuplicadoException;
+import com.minidbms.excepciones.CampoInexistenteException;
 import com.minidbms.gui.acciones.ControladorApp;
 import com.minidbms.gui.utilidades.PaletaColores;
 import com.minidbms.modelo.Campo;
@@ -45,14 +46,18 @@ public class VentanaPrincipal extends JFrame {
         tipoCampoCombo.setSelectedIndex(0);
         alternarComponentesPorTipoCampo();
 
-        // acciones del menú de la aplicación
-        salirMItem.addActionListener(e -> controlador.salir());
-
         panelOperaciones.setVisible(false);
         portadaPanel.setVisible(true);
 
         // Establecer identificadores para cada columna de la tabla `Campos`
-        DefaultTableModel modeloTablaCampo = (DefaultTableModel) tablaCampos.getModel();
+        DefaultTableModel modeloTablaCampo =
+                new DefaultTableModel() {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return false;
+                    }
+                };
+
         tablaCampos.setModel(modeloTablaCampo);
         modeloTablaCampo.setColumnCount(0);
         modeloTablaCampo.setRowCount(0);
@@ -60,38 +65,8 @@ public class VentanaPrincipal extends JFrame {
                 new String[] {
                     "ID", "Nombre", "Tipo", "Longitud Máxima", "Obligatorio", "Valor por defecto"
                 });
-    }
 
-    private void iniciarModelosNumericos() {
-        this.enteroModeloSpinner =
-                new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
-
-        this.decimalModeloSpinner = new SpinnerNumberModel(0.0, -1_000_000.0, 1_000_000.0, 0.1);
-    }
-
-    private void actualizarTablaCampos() {
-        if (!controlador.hayArchivoAbierto()) {
-            return;
-        }
-        List<Campo> campos = controlador.listarCampos();
-
-        DefaultTableModel modelo = (DefaultTableModel) tablaCampos.getModel();
-        modelo.setRowCount(0);
-        for (Campo campo : campos) {
-            modelo.addRow(
-                    new Object[] {
-                        campo.obtenerId(),
-                        campo.obtenerNombre(),
-                        campo.obtenerTipo(),
-                        campo.obtenerLongitudMaxima(),
-                        campo.esObligatorio() ? "true" : "false",
-                        campo.obtenerValorPredeterminado()
-                    });
-        }
-    }
-
-    private void actualizarTituloApp(String titulo) {
-        this.setTitle(NOMBRE_APLICACION + " | " + titulo);
+        tablaCampos.getTableHeader().setReorderingAllowed(false);
     }
 
     /**
@@ -367,6 +342,7 @@ public class VentanaPrincipal extends JFrame {
         cancelarCampoNuevoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         cancelarCampoNuevoBtn.setText("Cancelar");
         cancelarCampoNuevoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        cancelarCampoNuevoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cancelarCampoNuevoBtn.addMouseListener(
                 new java.awt.event.MouseAdapter() {
                     public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -380,6 +356,7 @@ public class VentanaPrincipal extends JFrame {
         agregarCampoNuevoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         agregarCampoNuevoBtn.setText("Agregar");
         agregarCampoNuevoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        agregarCampoNuevoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         agregarCampoNuevoBtn.addMouseListener(
                 new java.awt.event.MouseAdapter() {
                     public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -510,6 +487,7 @@ public class VentanaPrincipal extends JFrame {
         agregarCampoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         agregarCampoBtn.setText("Agregar campo");
         agregarCampoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 18, 4, 18));
+        agregarCampoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         agregarCampoBtn.setMaximumSize(new java.awt.Dimension(160, 35));
         agregarCampoBtn.setMinimumSize(new java.awt.Dimension(158, 35));
         agregarCampoBtn.setPreferredSize(new java.awt.Dimension(160, 35));
@@ -526,9 +504,16 @@ public class VentanaPrincipal extends JFrame {
         modificarCampoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         modificarCampoBtn.setText("Modificar");
         modificarCampoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 18, 4, 18));
+        modificarCampoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         modificarCampoBtn.setMaximumSize(new java.awt.Dimension(160, 35));
         modificarCampoBtn.setMinimumSize(new java.awt.Dimension(158, 35));
         modificarCampoBtn.setPreferredSize(new java.awt.Dimension(160, 35));
+        modificarCampoBtn.addMouseListener(
+                new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent evt) {
+                        modificarCampoBtnMouseClicked(evt);
+                    }
+                });
         operacionesCampoPanel.add(modificarCampoBtn);
 
         borrarCampoBtn.setBackground(paletaColores.ACENTO_PRIMARIO.color());
@@ -536,9 +521,16 @@ public class VentanaPrincipal extends JFrame {
         borrarCampoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         borrarCampoBtn.setText("Borrar");
         borrarCampoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 18, 4, 18));
+        borrarCampoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         borrarCampoBtn.setMaximumSize(new java.awt.Dimension(160, 35));
         borrarCampoBtn.setMinimumSize(new java.awt.Dimension(158, 35));
         borrarCampoBtn.setPreferredSize(new java.awt.Dimension(160, 35));
+        borrarCampoBtn.addMouseListener(
+                new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent evt) {
+                        borrarCampoBtnMouseClicked(evt);
+                    }
+                });
         operacionesCampoPanel.add(borrarCampoBtn);
 
         camposPanel.add(operacionesCampoPanel, java.awt.BorderLayout.PAGE_START);
@@ -601,6 +593,7 @@ public class VentanaPrincipal extends JFrame {
                 javax.swing.KeyStroke.getKeyStroke(
                         java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_DOWN_MASK));
         cerrarArchivoMItem.setText("Cerrar Archivo");
+        cerrarArchivoMItem.addActionListener(this::cerrarArchivoMItemActionPerformed);
         menuArchivo.add(cerrarArchivoMItem);
         menuArchivo.add(sepMenuArchivos);
 
@@ -610,6 +603,7 @@ public class VentanaPrincipal extends JFrame {
                         java.awt.event.InputEvent.SHIFT_DOWN_MASK
                                 | java.awt.event.InputEvent.CTRL_DOWN_MASK));
         salirMItem.setText("Salir");
+        salirMItem.addActionListener(this::salirMItemActionPerformed);
         menuArchivo.add(salirMItem);
 
         menubar.add(menuArchivo);
@@ -618,6 +612,72 @@ public class VentanaPrincipal extends JFrame {
 
         pack();
     } // </editor-fold>//GEN-END:initComponents
+
+    private void modificarCampoBtnMouseClicked(
+            java.awt.event.MouseEvent evt) { // GEN-FIRST:event_modificarCampoBtnMouseClicked
+        int fila = tablaCampos.getSelectedRow();
+        if (fila == -1) {
+            error("Seleccionar un campo en la tabla para modificar");
+            return;
+        }
+        int id = (int) tablaCampos.getValueAt(fila, 0);
+    } // GEN-LAST:event_modificarCampoBtnMouseClicked
+
+    private void borrarCampoBtnMouseClicked(
+            java.awt.event.MouseEvent evt) { // GEN-FIRST:event_borrarCampoBtnMouseClicked
+        int fila = tablaCampos.getSelectedRow();
+        if (fila == -1) {
+            error("Seleccionar un campo en la tabla para borrar");
+            return;
+        }
+        int id = (int) tablaCampos.getValueAt(fila, 0);
+        String nombre = (String) tablaCampos.getValueAt(fila, 1);
+
+        int borrarOk =
+                JOptionPane.showConfirmDialog(
+                        this,
+                        "Se borrará el campo \""
+                                + nombre
+                                + "\". Esta acción no se puede deshacer. ¿Confirma?",
+                        "Confirmación de eliminación",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE);
+        if (borrarOk != JOptionPane.YES_OPTION) {
+            return;
+        }
+        try {
+            controlador.borrarCampo(id);
+            actualizarTablaCampos();
+            info("Campo borrado correctamente");
+        } catch (CampoInexistenteException | ArchivoInvalidoException ex) {
+            error(ex.getMessage());
+        } catch (IllegalStateException ex) {
+            error("No se puede borrar: " + ex.getMessage());
+        }
+    } // GEN-LAST:event_borrarCampoBtnMouseClicked
+
+    private void salirMItemActionPerformed(
+            java.awt.event.ActionEvent evt) { // GEN-FIRST:event_salirMItemActionPerformed
+        if (!confirmarModificaciones()) {
+            return;
+        }
+        controlador.salir();
+    } // GEN-LAST:event_salirMItemActionPerformed
+
+    private void cerrarArchivoMItemActionPerformed(
+            java.awt.event.ActionEvent evt) { // GEN-FIRST:event_cerrarArchivoMItemActionPerformed
+        if (!controlador.hayArchivoAbierto()) {
+            return;
+        }
+        if (!confirmarModificaciones()) {
+            return;
+        }
+        controlador.cerrar();
+        portadaPanel.setVisible(true);
+        panelOperaciones.setVisible(false);
+        actualizarTablaCampos();
+        actualizarTituloApp("");
+    } // GEN-LAST:event_cerrarArchivoMItemActionPerformed
 
     private void guardarArchivoMItemActionPerformed(
             java.awt.event.ActionEvent evt) { // GEN-FIRST:event_guardarArchivoMItemActionPerformed
@@ -672,43 +732,6 @@ public class VentanaPrincipal extends JFrame {
         alternarComponentesPorTipoCampo();
     } // GEN-LAST:event_tipoCampoComboItemStateChanged
 
-    private void alternarComponentesPorTipoCampo() {
-        TipoCampo campoSeleccionado = (TipoCampo) tipoCampoCombo.getSelectedItem();
-        longitudCampoSpinner.setEnabled(campoSeleccionado == TipoCampo.TEXTO);
-
-        switch (campoSeleccionado) {
-            case TipoCampo.TEXTO, TipoCampo.FECHA -> {
-                valorDefectoSpinner.setVisible(false);
-                valorDefectoCheckbox.setVisible(false);
-                valorDefectoField.setVisible(true);
-            }
-            case TipoCampo.DECIMAL, TipoCampo.ENTERO -> {
-                valorDefectoCheckbox.setVisible(false);
-                valorDefectoField.setVisible(false);
-                valorDefectoSpinner.setVisible(true);
-                valorDefectoSpinner.setModel(
-                        campoSeleccionado == TipoCampo.ENTERO
-                                ? enteroModeloSpinner
-                                : decimalModeloSpinner);
-            }
-            case TipoCampo.BOOLEANO -> {
-                valorDefectoSpinner.setVisible(false);
-                valorDefectoField.setVisible(false);
-                valorDefectoCheckbox.setVisible(true);
-            }
-        }
-    }
-
-    private void resetFormCampoNuevo() {
-        nombreCampoInput.setText("");
-        tipoCampoCombo.setSelectedIndex(0);
-        obligatorioCheckbox.setSelected(false);
-        valorDefectoField.setText("");
-        valorDefectoCheckbox.setSelected(false);
-        longitudCampoSpinner.setValue(1);
-        alternarComponentesPorTipoCampo();
-    }
-
     private void agregarCampoBtnMouseClicked(
             java.awt.event.MouseEvent evt) { // GEN-FIRST:event_agregarCampoBtnMouseClicked
         resetFormCampoNuevo();
@@ -746,7 +769,101 @@ public class VentanaPrincipal extends JFrame {
         nuevoArchivo();
     } // GEN-LAST:event_nuevoArchivoPortadaBtnMouseClicked
 
+    private void iniciarModelosNumericos() {
+        this.enteroModeloSpinner =
+                new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1);
+
+        this.decimalModeloSpinner = new SpinnerNumberModel(0.0, -1_000_000.0, 1_000_000.0, 0.1);
+    }
+
+    private void actualizarTablaCampos() {
+        DefaultTableModel modelo = (DefaultTableModel) tablaCampos.getModel();
+        modelo.setRowCount(0);
+        if (!controlador.hayArchivoAbierto()) {
+            return;
+        }
+        List<Campo> campos = controlador.listarCampos();
+        for (Campo campo : campos) {
+            modelo.addRow(
+                    new Object[] {
+                        campo.obtenerId(),
+                        campo.obtenerNombre(),
+                        campo.obtenerTipo(),
+                        campo.obtenerLongitudMaxima(),
+                        campo.esObligatorio() ? "true" : "false",
+                        campo.obtenerValorPredeterminado()
+                    });
+        }
+    }
+
+    private void actualizarTituloApp(String titulo) {
+        this.setTitle(NOMBRE_APLICACION + (!titulo.trim().isEmpty() ? " | " + titulo : ""));
+    }
+
+    private boolean confirmarModificaciones() {
+        if (!controlador.hayModificaciones()) {
+            return true;
+        }
+        int opcion =
+                JOptionPane.showConfirmDialog(
+                        this,
+                        "Hay cambios sin guardar. ¿Desea guardarlos?",
+                        "Cambios sin guardar",
+                        JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.WARNING_MESSAGE);
+        if (opcion == JOptionPane.YES_OPTION) {
+            try {
+                controlador.guardar();
+                info("Archivo guardado correctamente");
+                return true;
+            } catch (IOException | IllegalStateException ex) {
+                error("No se pudo guardar: " + ex.getMessage());
+                return false;
+            }
+        } else return opcion == JOptionPane.NO_OPTION;
+    }
+
+    private void alternarComponentesPorTipoCampo() {
+        TipoCampo campoSeleccionado = (TipoCampo) tipoCampoCombo.getSelectedItem();
+        longitudCampoSpinner.setEnabled(campoSeleccionado == TipoCampo.TEXTO);
+
+        switch (campoSeleccionado) {
+            case TipoCampo.TEXTO, TipoCampo.FECHA -> {
+                valorDefectoSpinner.setVisible(false);
+                valorDefectoCheckbox.setVisible(false);
+                valorDefectoField.setVisible(true);
+            }
+            case TipoCampo.DECIMAL, TipoCampo.ENTERO -> {
+                valorDefectoCheckbox.setVisible(false);
+                valorDefectoField.setVisible(false);
+                valorDefectoSpinner.setVisible(true);
+                valorDefectoSpinner.setModel(
+                        campoSeleccionado == TipoCampo.ENTERO
+                                ? enteroModeloSpinner
+                                : decimalModeloSpinner);
+            }
+            case TipoCampo.BOOLEANO -> {
+                valorDefectoSpinner.setVisible(false);
+                valorDefectoField.setVisible(false);
+                valorDefectoCheckbox.setVisible(true);
+            }
+        }
+    }
+
+    private void resetFormCampoNuevo() {
+        nombreCampoInput.setText("");
+        tipoCampoCombo.setSelectedIndex(0);
+        obligatorioCheckbox.setSelected(false);
+        valorDefectoField.setText("");
+        valorDefectoCheckbox.setSelected(false);
+        longitudCampoSpinner.setValue(1);
+        alternarComponentesPorTipoCampo();
+    }
+
     private void nuevoArchivo() {
+        if (!confirmarModificaciones()) {
+            return;
+        }
         String nombre = JOptionPane.showInputDialog(this, "Ingrese el nombre del archivo a crear:");
         if (nombre == null || nombre.trim().isEmpty()) {
             return;
@@ -758,13 +875,15 @@ public class VentanaPrincipal extends JFrame {
             actualizarTituloApp(controlador.obtenerMetadata().obtenerNombreArchivo());
             actualizarTablaCampos();
             info("Archivo creado exitosamente");
-            actualizarTituloApp(controlador.obtenerMetadata().obtenerNombreArchivo());
         } catch (IOException | IllegalStateException ex) {
             error("Error al crear el archivo: " + ex.getMessage());
         }
     }
 
     private void abrirArchivo() {
+        if (!confirmarModificaciones()) {
+            return;
+        }
         JFileChooser selector = new JFileChooser();
         if (selector.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File archivo = selector.getSelectedFile();

@@ -16,6 +16,7 @@ public class ControladorApp implements AccionesApp {
 
     private String ruta;
     private Metadata metadata;
+    private boolean modificado;
 
     public void crearArchivo(String nombre) throws IOException, IllegalStateException {
         if (nombre == null || nombre.isBlank()) {
@@ -34,6 +35,7 @@ public class ControladorApp implements AccionesApp {
         metadataTemp.guardar(archivo);
         this.ruta = archivo.getAbsolutePath();
         this.metadata = metadataTemp;
+        this.modificado = false;
     }
 
     public void abrirArchivo(File file) throws IOException, ArchivoInvalidoException {
@@ -41,6 +43,7 @@ public class ControladorApp implements AccionesApp {
             Metadata metadataTemp = Metadata.leer(br);
             this.ruta = file.getAbsolutePath();
             this.metadata = metadataTemp;
+            this.modificado = false;
         }
     }
 
@@ -49,6 +52,7 @@ public class ControladorApp implements AccionesApp {
             return;
         }
         metadata.guardar(new File(ruta));
+        modificado = false;
     }
 
     public void crearCampo(
@@ -62,11 +66,21 @@ public class ControladorApp implements AccionesApp {
             throw new ArchivoInvalidoException("No hay un archivo abierto.");
         }
         metadata.agregarCampo(nombre, tipo, longitudMax, obligatorio, valorPredeterminado);
+        this.modificado = true;
+    }
+
+    public void borrarCampo(int id) throws ArchivoInvalidoException {
+        if (!hayArchivoAbierto()) {
+            throw new ArchivoInvalidoException("No hay un archivo abierto");
+        }
+        metadata.borrarCampo(id);
+        this.modificado = true;
     }
 
     public void cerrar() {
         this.ruta = null;
         this.metadata = null;
+        this.modificado = false;
     }
 
     public boolean hayArchivoAbierto() {
@@ -83,6 +97,10 @@ public class ControladorApp implements AccionesApp {
 
     public List<Campo> listarCampos() {
         return metadata.obtenerCampos();
+    }
+
+    public boolean hayModificaciones() {
+        return modificado;
     }
 
     @Override
