@@ -1,6 +1,6 @@
 package com.minidbms.modelo;
 
-import com.minidbms.utilidades.ValidadorTexto;
+import com.minidbms.utilidad.ValidadorTexto;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 

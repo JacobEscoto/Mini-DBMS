@@ -1,4 +1,4 @@
-package com.minidbms.utilidades;
+package com.minidbms.utilidad;
 
 public class ValidadorTexto {
 

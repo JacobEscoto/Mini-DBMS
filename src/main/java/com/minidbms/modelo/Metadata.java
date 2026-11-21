@@ -1,9 +1,9 @@
 package com.minidbms.modelo;
 
-import com.minidbms.excepciones.ArchivoInvalidoException;
-import com.minidbms.excepciones.CampoDuplicadoException;
-import com.minidbms.excepciones.CampoInexistenteException;
-import com.minidbms.utilidades.ValidadorTexto;
+import com.minidbms.excepcion.ArchivoInvalidoException;
+import com.minidbms.excepcion.CampoDuplicadoException;
+import com.minidbms.excepcion.CampoInexistenteException;
+import com.minidbms.utilidad.ValidadorTexto;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,6 +20,7 @@ public class Metadata {
     private ArrayList<Campo> campos;
     private int siguienteCampoId;
     private int llavePrimariaId;
+    private ArrayList<LlaveForanea> llavesForaneas;
 
     private long inicioAvailList;
 
@@ -43,6 +44,8 @@ public class Metadata {
 
         this.campos = new ArrayList<>();
         this.siguienteCampoId = siguienteCampoId;
+        
+        this.llavesForaneas = new ArrayList<>();
 
         this.llavePrimariaId = -1;
 
@@ -173,6 +176,10 @@ public class Metadata {
                     "La versión del formato del archivo debe ser mayor que cero");
         }
         this.versionFormato = nuevaVersionFormato;
+    }
+    
+    public void agregarLlaveForanea(LlaveForanea fk) {
+        llavesForaneas.add(fk);
     }
 
     private boolean esLlavePrimaria(int id) {

@@ -1,10 +1,10 @@
 package com.minidbms.gui;
 
-import com.minidbms.excepciones.ArchivoInvalidoException;
-import com.minidbms.excepciones.CampoDuplicadoException;
-import com.minidbms.excepciones.CampoInexistenteException;
+import com.minidbms.excepcion.ArchivoInvalidoException;
+import com.minidbms.excepcion.CampoDuplicadoException;
+import com.minidbms.excepcion.CampoInexistenteException;
 import com.minidbms.gui.acciones.ControladorApp;
-import com.minidbms.gui.utilidades.PaletaColores;
+import com.minidbms.gui.utilidad.PaletaColores;
 import com.minidbms.modelo.Campo;
 import com.minidbms.modelo.TipoCampo;
 import java.io.File;

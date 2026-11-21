@@ -1,4 +1,4 @@
-package com.minidbms.gui.utilidades;
+package com.minidbms.gui.utilidad;
 
 import java.awt.Color;
 

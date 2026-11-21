@@ -1,8 +1,8 @@
 package com.minidbms.gui.acciones;
 
-import com.minidbms.excepciones.ArchivoInvalidoException;
-import com.minidbms.excepciones.CampoDuplicadoException;
-import com.minidbms.excepciones.CampoInexistenteException;
+import com.minidbms.excepcion.ArchivoInvalidoException;
+import com.minidbms.excepcion.CampoDuplicadoException;
+import com.minidbms.excepcion.CampoInexistenteException;
 import com.minidbms.modelo.Campo;
 import com.minidbms.modelo.Metadata;
 import com.minidbms.modelo.TipoCampo;
