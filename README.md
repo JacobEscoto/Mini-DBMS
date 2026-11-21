@@ -2,6 +2,11 @@
 
 Sistema gestor de bases de datos con la capacidad de manejar archivos en disco sin cargar toda la información a la memoria RAM.
 
+## Funciones principales
+- [x] Operaciones con archivos (crear, abrir, guardar y cerrar)
+- [x] Operaciones con campos (crear, listar, borrar)
+- [ ] Operaciones de modificación de campos (renombrar, cambiar tipo, reducir longitud)
+
 ## Estructura de Carpetas
 - `com.minidbms`:
   - Contiene únicamente la clase principal para el arranque de la aplicación.
@@ -43,4 +48,4 @@ mvn exec:java -Dexec.mainClass="com.minidbms.App"
 
 ```bash
 ./scripts/run.sh
-``` 
+```
