@@ -17,12 +17,15 @@ public class Metadata {
     private String nombreArchivo;
     private int versionFormato;
 
-    private ArrayList<Campo> campos;
+    private ArrayList<Campo> campos = new ArrayList<>();
+    private ArrayList<LlaveForanea> llavesForaneas = new ArrayList<>();
+    private ArrayList<DefinicionIndice> indices = new ArrayList<>();
+
     private int siguienteCampoId;
     private int llavePrimariaId;
-    private ArrayList<LlaveForanea> llavesForaneas;
 
-    private long inicioAvailList;
+    private long inicioAvailList = -1L;
+    private PoliticaReutilizacion politicaReutilizacion;
 
     // Contadores
     private int registrosActivos;
@@ -41,14 +44,8 @@ public class Metadata {
         }
         this.versionFormato = VERSION_FORMATO;
         this.nombreArchivo = nombreArchivo.trim();
-
-        this.campos = new ArrayList<>();
         this.siguienteCampoId = siguienteCampoId;
-        
-        this.llavesForaneas = new ArrayList<>();
-
         this.llavePrimariaId = -1;
-
         this.registrosActivos = 0;
         this.registrosEliminados = 0;
         this.bytesLibres = 0;
@@ -61,7 +58,7 @@ public class Metadata {
             boolean obligatorio,
             String valorPredeterminado) {
         if (!esNombreUnico(nombre)) {
-            throw new CampoDuplicadoException("nombre", nombre);
+            throw new CampoDuplicadoException(nombreArchivo, nombre);
         }
 
         Campo campoNuevo =
@@ -82,13 +79,14 @@ public class Metadata {
 
     public void agregarCampo(Campo campo) {
         if (campo == null) {
-            throw new CampoInexistenteException("El campo no debe ser nulo.");
+            throw new IllegalArgumentException("El campo no debe ser nulo");
         }
-        if (buscarCampoPorId(campo.obtenerId()) != null) {
-            throw new CampoDuplicadoException("ID", String.valueOf(campo.obtenerId()));
+        Campo campoBuscado = buscarCampoPorId(campo.obtenerId());
+        if (campoBuscado != null) {
+            throw new CampoDuplicadoException(nombreArchivo, campoBuscado.obtenerNombre());
         }
         if (!esNombreUnico(campo.obtenerNombre())) {
-            throw new CampoDuplicadoException("nombre", campo.obtenerNombre());
+            throw new CampoDuplicadoException(nombreArchivo, campo.obtenerNombre());
         }
         campos.add(campo);
         siguienteCampoId =
@@ -117,12 +115,12 @@ public class Metadata {
         }
         Campo campo = buscarCampoPorId(id);
         if (campo == null) {
-            throw new CampoInexistenteException(id, "No se puede renombrar.");
+            throw new CampoInexistenteException(nombreArchivo, id);
         }
 
         nuevoNombre = nuevoNombre.trim();
         if (!esNombreUnico(nuevoNombre)) {
-            throw new CampoDuplicadoException("nombre", nuevoNombre);
+            throw new CampoDuplicadoException(nombreArchivo, nuevoNombre);
         }
         campo.renombrar(nuevoNombre.trim());
     }
@@ -130,7 +128,7 @@ public class Metadata {
     public void reducirLongitudCampo(int id, int longitudMaxima) {
         Campo campo = buscarCampoPorId(id);
         if (campo == null) {
-            throw new CampoInexistenteException(id, "No se puede reducir la longitud.");
+            throw new CampoInexistenteException(nombreArchivo, id);
         }
         campo.reducirLongitudMaxima(longitudMaxima);
     }
@@ -138,7 +136,7 @@ public class Metadata {
     public void cambiarTipoCampo(int id, TipoCampo nuevoTipo, int nuevaLongitud) {
         Campo campo = buscarCampoPorId(id);
         if (campo == null) {
-            throw new CampoInexistenteException(id, "No se puede cambiar el tipo de campo.");
+            throw new CampoInexistenteException(nombreArchivo, id);
         }
         campo.cambiarTipo(nuevoTipo, nuevaLongitud);
     }
@@ -146,7 +144,7 @@ public class Metadata {
     public void borrarCampo(int id) {
         Campo campo = buscarCampoPorId(id);
         if (campo == null) {
-            throw new CampoInexistenteException(id, "No se puede borrar");
+            throw new CampoInexistenteException(nombreArchivo, id);
         }
         if (esLlavePrimaria(id)) {
             throw new IllegalStateException(
@@ -158,7 +156,7 @@ public class Metadata {
     public void establecerLlavePrimaria(int id) {
         Campo campo = buscarCampoPorId(id);
         if (campo == null) {
-            throw new CampoInexistenteException(id, "No se puede establecer como llave primaria.");
+            throw new CampoInexistenteException(nombreArchivo, id);
         }
         if (!campo.esObligatorio()) {
             throw new IllegalStateException(
@@ -177,8 +175,11 @@ public class Metadata {
         }
         this.versionFormato = nuevaVersionFormato;
     }
-    
+
     public void agregarLlaveForanea(LlaveForanea fk) {
+        if (fk == null) {
+            throw new IllegalArgumentException("La llave foránea es nula");
+        }
         llavesForaneas.add(fk);
     }
 
@@ -200,6 +201,10 @@ public class Metadata {
 
     public long obtenerInicioAvailList() {
         return inicioAvailList;
+    }
+
+    public PoliticaReutilizacion obtenerPoliticaReutilizacion() {
+        return politicaReutilizacion;
     }
 
     public int obtenerVersionFormato() {
