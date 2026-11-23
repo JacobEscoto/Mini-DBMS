@@ -621,6 +621,95 @@ public class VentanaPrincipal extends JFrame {
             return;
         }
         int id = (int) tablaCampos.getValueAt(fila, 0);
+        Campo campo = controlador.obtenerMetadata().buscarCampoPorId(id);
+        String[] opciones = {"Nombre", "Tipo", "Longitud"};
+        String opcion =
+                (String)
+                        JOptionPane.showInputDialog(
+                                null,
+                                "Seleccione qué desea modificar:",
+                                "Modificar campo",
+                                JOptionPane.QUESTION_MESSAGE,
+                                null,
+                                opciones,
+                                opciones[0]);
+        if (opcion == null) {
+        return;
+    }
+        switch (opcion) {
+            case "Nombre":
+                String nombre =
+                        JOptionPane.showInputDialog(
+                                null, "Ingrese el nuevo nombre:", campo.obtenerNombre());
+                if (nombre != null && !nombre.trim().isEmpty()) {
+                    controlador.obtenerMetadata().renombrarCampo(id, nombre);
+                }
+                break;
+            case "Tipo":
+                TipoCampo tipo =
+                        (TipoCampo)
+                                JOptionPane.showInputDialog(
+                                        null,
+                                        "Seleccione el nuevo tipo:",
+                                        "Modificar tipo",
+                                        JOptionPane.QUESTION_MESSAGE,
+                                        null,
+                                        TipoCampo.values(),
+                                        campo.obtenerTipo());
+                if (tipo == null) {
+                return;
+            }
+                if (tipo == TipoCampo.TEXTO && campo.obtenerTipo() != TipoCampo.TEXTO) {
+                    String tamano =
+                            JOptionPane.showInputDialog(null, "Ingrese el tamaño para su texto:")
+                                    .trim();
+                    if (tamano.isBlank()) {
+                        error("Ingrese un numero del tamaño para modificar");
+                        return;
+                    }
+                    try {
+                        int tam = Integer.parseInt(tamano);
+                        controlador.obtenerMetadata().cambiarTipoCampo(id, tipo, tam);
+                        actualizarTablaCampos();
+                        return;
+                    } catch (Exception e) {
+                        error("Ingrese numero");
+                        return;
+                    }
+                }
+                controlador
+                        .obtenerMetadata()
+                        .cambiarTipoCampo(id, tipo, campo.obtenerLongitudMaxima());
+                if (tipo == null) {
+                    return;
+                }
+                controlador
+                        .obtenerMetadata()
+                        .cambiarTipoCampo(id, tipo, campo.obtenerLongitudMaxima());
+                break;
+            case "Longitud":
+                if (campo.obtenerTipo() != TipoCampo.TEXTO) {
+                    error("Solo texto tiene tamaño maxíma");
+                    return;
+                }
+                String tamano =
+                        JOptionPane.showInputDialog(null, "Ingrese el tamaño para su texto:")
+                                .trim();
+                if (tamano.isBlank()) {
+                    error("Ingrese un numero del tamaño para modificar");
+                    return;
+                }
+                try {
+                    int tam = Integer.parseInt(tamano);
+                    controlador.obtenerMetadata().cambiarTipoCampo(id, campo.obtenerTipo(), tam);
+                    actualizarTablaCampos();
+                    return;
+                } catch (Exception e) {
+                    error("Ingrese numero");
+                    return;
+                }
+        }
+        actualizarTablaCampos();
     } // GEN-LAST:event_modificarCampoBtnMouseClicked
 
     private void borrarCampoBtnMouseClicked(
@@ -820,7 +909,9 @@ public class VentanaPrincipal extends JFrame {
                 error("No se pudo guardar: " + ex.getMessage());
                 return false;
             }
-        } else return opcion == JOptionPane.NO_OPTION;
+        } else {
+            return opcion == JOptionPane.NO_OPTION;
+        }
     }
 
     private void alternarComponentesPorTipoCampo() {
