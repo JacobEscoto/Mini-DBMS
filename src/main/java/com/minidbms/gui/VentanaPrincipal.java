@@ -634,18 +634,18 @@ public class VentanaPrincipal extends JFrame {
                                 opciones,
                                 opciones[0]);
         if (opcion == null) {
-        return;
-    }
+            return;
+        }
         switch (opcion) {
-            case "Nombre":
+            case "Nombre" -> {
                 String nombre =
                         JOptionPane.showInputDialog(
                                 null, "Ingrese el nuevo nombre:", campo.obtenerNombre());
                 if (nombre != null && !nombre.trim().isEmpty()) {
                     controlador.obtenerMetadata().renombrarCampo(id, nombre);
                 }
-                break;
-            case "Tipo":
+            }
+            case "Tipo" -> {
                 TipoCampo tipo =
                         (TipoCampo)
                                 JOptionPane.showInputDialog(
@@ -657,14 +657,14 @@ public class VentanaPrincipal extends JFrame {
                                         TipoCampo.values(),
                                         campo.obtenerTipo());
                 if (tipo == null) {
-                return;
-            }
+                    return;
+                }
                 if (tipo == TipoCampo.TEXTO && campo.obtenerTipo() != TipoCampo.TEXTO) {
                     String tamano =
                             JOptionPane.showInputDialog(null, "Ingrese el tamaño para su texto:")
                                     .trim();
                     if (tamano.isBlank()) {
-                        error("Ingrese un numero del tamaño para modificar");
+                        error("El tamaño es obligatorio");
                         return;
                     }
                     try {
@@ -672,31 +672,25 @@ public class VentanaPrincipal extends JFrame {
                         controlador.obtenerMetadata().cambiarTipoCampo(id, tipo, tam);
                         actualizarTablaCampos();
                         return;
-                    } catch (Exception e) {
-                        error("Ingrese numero");
+                    } catch (NumberFormatException e) {
+                        error("Se debe ingresar un número válido");
                         return;
                     }
                 }
                 controlador
                         .obtenerMetadata()
                         .cambiarTipoCampo(id, tipo, campo.obtenerLongitudMaxima());
-                if (tipo == null) {
-                    return;
-                }
-                controlador
-                        .obtenerMetadata()
-                        .cambiarTipoCampo(id, tipo, campo.obtenerLongitudMaxima());
-                break;
-            case "Longitud":
+            }
+            case "Longitud" -> {
                 if (campo.obtenerTipo() != TipoCampo.TEXTO) {
-                    error("Solo texto tiene tamaño maxíma");
+                    error("Solo campos con tipo 'TEXTO' puede modificar su longitud");
                     return;
                 }
                 String tamano =
                         JOptionPane.showInputDialog(null, "Ingrese el tamaño para su texto:")
                                 .trim();
                 if (tamano.isBlank()) {
-                    error("Ingrese un numero del tamaño para modificar");
+                    error("La longitud a modificar es obligatorio. Se esperaba un número");
                     return;
                 }
                 try {
@@ -704,10 +698,11 @@ public class VentanaPrincipal extends JFrame {
                     controlador.obtenerMetadata().cambiarTipoCampo(id, campo.obtenerTipo(), tam);
                     actualizarTablaCampos();
                     return;
-                } catch (Exception e) {
-                    error("Ingrese numero");
+                } catch (NumberFormatException | CampoInexistenteException ex) {
+                    error("Error: " + ex.getMessage());
                     return;
                 }
+            }
         }
         actualizarTablaCampos();
     } // GEN-LAST:event_modificarCampoBtnMouseClicked

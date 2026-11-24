@@ -119,10 +119,13 @@ public class Metadata {
         }
 
         nuevoNombre = nuevoNombre.trim();
+        if (campo.obtenerNombre().equalsIgnoreCase(nuevoNombre)) {
+            return;
+        }
         if (!esNombreUnico(nuevoNombre)) {
             throw new CampoDuplicadoException(nombreArchivo, nuevoNombre);
         }
-        campo.renombrar(nuevoNombre.trim());
+        campo.renombrar(nuevoNombre);
     }
 
     public void reducirLongitudCampo(int id, int longitudMaxima) {
