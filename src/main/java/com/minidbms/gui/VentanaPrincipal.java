@@ -1,12 +1,12 @@
 package com.minidbms.gui;
 
 import com.minidbms.excepcion.ArchivoInvalidoException;
-import com.minidbms.excepcion.CampoDuplicadoException;
 import com.minidbms.excepcion.CampoInexistenteException;
 import com.minidbms.gui.acciones.ControladorApp;
 import com.minidbms.gui.utilidad.PaletaColores;
 import com.minidbms.modelo.Campo;
 import com.minidbms.modelo.TipoCampo;
+import com.minidbms.utilidad.ValidadorTexto;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -295,8 +295,6 @@ public class VentanaPrincipal extends JFrame {
         longitudCampoSpinner.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         longitudCampoSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
         longitudCampoSpinner.setMaximumSize(new java.awt.Dimension(32767, 25));
-        longitudCampoSpinner.setMinimumSize(new java.awt.Dimension(64, 25));
-        longitudCampoSpinner.setPreferredSize(new java.awt.Dimension(64, 25));
         tipoCampoPanel.add(longitudCampoSpinner);
         tipoCampoPanel.add(filler6);
 
@@ -342,7 +340,7 @@ public class VentanaPrincipal extends JFrame {
         cancelarCampoNuevoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         cancelarCampoNuevoBtn.setText("Cancelar");
         cancelarCampoNuevoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 15));
-        cancelarCampoNuevoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        cancelarCampoNuevoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         cancelarCampoNuevoBtn.addMouseListener(
                 new java.awt.event.MouseAdapter() {
                     public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -356,7 +354,7 @@ public class VentanaPrincipal extends JFrame {
         agregarCampoNuevoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         agregarCampoNuevoBtn.setText("Agregar");
         agregarCampoNuevoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 15, 5, 15));
-        agregarCampoNuevoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        agregarCampoNuevoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         agregarCampoNuevoBtn.addMouseListener(
                 new java.awt.event.MouseAdapter() {
                     public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -374,6 +372,7 @@ public class VentanaPrincipal extends JFrame {
         crearCampoDialogo.getContentPane().add(dialogPanelPadre, java.awt.BorderLayout.CENTER);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Mini DBMS");
 
         panelPadre.setLayout(new java.awt.CardLayout());
 
@@ -428,7 +427,7 @@ public class VentanaPrincipal extends JFrame {
                 javax.swing.BorderFactory.createCompoundBorder(
                         javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1),
                         javax.swing.BorderFactory.createEmptyBorder(4, 10, 4, 10)));
-        nuevoArchivoPortadaBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        nuevoArchivoPortadaBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         nuevoArchivoPortadaBtn.setPreferredSize(new java.awt.Dimension(240, 40));
         nuevoArchivoPortadaBtn.addMouseListener(
                 new java.awt.event.MouseAdapter() {
@@ -446,7 +445,7 @@ public class VentanaPrincipal extends JFrame {
                 javax.swing.BorderFactory.createCompoundBorder(
                         javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1),
                         javax.swing.BorderFactory.createEmptyBorder(4, 10, 4, 10)));
-        abrirArchivoPortadaBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        abrirArchivoPortadaBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         abrirArchivoPortadaBtn.setMargin(new java.awt.Insets(2, 40, 2, 14));
         abrirArchivoPortadaBtn.setPreferredSize(new java.awt.Dimension(240, 40));
         abrirArchivoPortadaBtn.addMouseListener(
@@ -487,7 +486,7 @@ public class VentanaPrincipal extends JFrame {
         agregarCampoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         agregarCampoBtn.setText("Agregar campo");
         agregarCampoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 18, 4, 18));
-        agregarCampoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        agregarCampoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         agregarCampoBtn.setMaximumSize(new java.awt.Dimension(160, 35));
         agregarCampoBtn.setMinimumSize(new java.awt.Dimension(158, 35));
         agregarCampoBtn.setPreferredSize(new java.awt.Dimension(160, 35));
@@ -504,7 +503,7 @@ public class VentanaPrincipal extends JFrame {
         modificarCampoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         modificarCampoBtn.setText("Modificar");
         modificarCampoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 18, 4, 18));
-        modificarCampoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        modificarCampoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         modificarCampoBtn.setMaximumSize(new java.awt.Dimension(160, 35));
         modificarCampoBtn.setMinimumSize(new java.awt.Dimension(158, 35));
         modificarCampoBtn.setPreferredSize(new java.awt.Dimension(160, 35));
@@ -521,7 +520,7 @@ public class VentanaPrincipal extends JFrame {
         borrarCampoBtn.setForeground(paletaColores.TEXTO_PRIMARIO.color());
         borrarCampoBtn.setText("Borrar");
         borrarCampoBtn.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 18, 4, 18));
-        borrarCampoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        borrarCampoBtn.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         borrarCampoBtn.setMaximumSize(new java.awt.Dimension(160, 35));
         borrarCampoBtn.setMinimumSize(new java.awt.Dimension(158, 35));
         borrarCampoBtn.setPreferredSize(new java.awt.Dimension(160, 35));
@@ -689,6 +688,9 @@ public class VentanaPrincipal extends JFrame {
                 String tamano =
                         JOptionPane.showInputDialog(null, "Ingrese el tamaño para su texto:")
                                 .trim();
+                if (tamano == null) {
+                    return;
+                }
                 if (tamano.isBlank()) {
                     error("La longitud a modificar es obligatorio. Se esperaba un número");
                     return;
@@ -806,7 +808,7 @@ public class VentanaPrincipal extends JFrame {
             crearCampoDialogo.setVisible(false);
             resetFormCampoNuevo();
             actualizarTablaCampos();
-        } catch (CampoDuplicadoException | ArchivoInvalidoException ex) {
+        } catch (ArchivoInvalidoException | IllegalArgumentException ex) {
             error("Error al crear el campo: " + ex.getMessage());
         }
     } // GEN-LAST:event_agregarCampoNuevoBtnMouseClicked
@@ -955,13 +957,14 @@ public class VentanaPrincipal extends JFrame {
             return;
         }
         try {
+            ValidadorTexto.validarCaracteresProhibidos(nombre);
             controlador.crearArchivo(nombre);
             portadaPanel.setVisible(false);
             panelOperaciones.setVisible(true);
             actualizarTituloApp(controlador.obtenerMetadata().obtenerNombreArchivo());
             actualizarTablaCampos();
             info("Archivo creado exitosamente");
-        } catch (IOException | IllegalStateException ex) {
+        } catch (IOException | IllegalStateException | IllegalArgumentException ex) {
             error("Error al crear el archivo: " + ex.getMessage());
         }
     }
